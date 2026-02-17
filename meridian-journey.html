@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meridian Padel</title>
+    <meta
+      name="description"
+      content="Discover the Meridian journey: how it works, experience formats and the timeline we coordinate for premium padel trips."
+    />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300;700&amp;display=swap"
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" href="assets/favicon/favicon.ico" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/favicon/favicon-32x32.png"
+    />
+    <link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png" />
+
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="main.js"></script>
+  </head>
+
+  <body class="page page--journey">
+    <div class="bg-orbs" aria-hidden="true"></div>
+
+    <header class="header">
+      <div class="container header__inner">
+        <a class="brand" href="index.html" aria-label="Meridian Padel Home">
+          <span class="brand__logo">
+            <img
+              class="brand__logoImg"
+              src="assets/img/logo-meridian.png"
+              alt="Meridian Padel logo"
+            />
+          </span>
+          <span class="brand__text">
+            <span class="brand__name">Meridian Padel</span>
+          </span>
+        </a>
+
+        <button
+          class="navToggle"
+          type="button"
+          aria-controls="primary-nav"
+          aria-expanded="false"
+        >
+          <span></span><span></span><span></span>
+        </button>
+
+        <nav class="nav" id="primary-nav" aria-label="Primary navigation">
+          <a class="nav__link" href="index.html">Home</a>
+          <a class="nav__link" href="who-we-are.html">Who We Are</a>
+          <a class="nav__link" href="meridian-journey.html" aria-current="page"
+            >Meridian Journey</a
+          >
+          <a class="nav__link" href="cities.html">Cities</a>
+          <a class="nav__link" href="packages.html">Packages</a>
+          <!-- <a class="nav__cta" href="index.html#contact">Contact</a> -->
+        </nav>
+      </div>
+    </header>
+
+    <main class="page__content" id="top">
+      <!-- EXPERIENCES (TABS) -->
+      <section class="section" id="experiences">
+        <div class="container">
+          <div class="sectionHead">
+            <h2 class="sectionHead__title">Experiences</h2>
+            <p class="sectionHead__subtitle">
+              Premium travel, made effortless — we curate where you stay, how
+              you move, and what you taste.
+            </p>
+          </div>
+
+          <div class="tabsCard card card--glass" data-tabs>
+            <div class="tabsNav" role="tablist" aria-label="Experience types">
+              <button
+                class="tabsBtn is-active"
+                type="button"
+                role="tab"
+                aria-selected="true"
+                data-tab="accommodation"
+              >
+                Accommodation
+              </button>
+              <button
+                class="tabsBtn"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-tab="transport"
+                aria-label="Transport &amp; Chauffeur"
+              >
+                <span class="tabsLabel tabsLabel--full"
+                  >Transport &amp; Chauffeur</span
+                >
+                <span class="tabsLabel tabsLabel--short">Transport</span>
+              </button>
+              <button
+                class="tabsBtn"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-tab="gastronomy"
+              >
+                Gastronomy
+              </button>
+            </div>
+
+            <div class="tabsPanels">
+              <div
+                class="tabsPanel is-active"
+                role="tabpanel"
+                data-panel="accommodation"
+              >
+                <div class="tabsGrid">
+                  <div class="tabsCopy">
+                    <h3 class="tabsTitle">Accommodation</h3>
+                    <p class="tabsKicker">
+                      Featured partner: <strong>Meli&aacute; + Grahana</strong>
+                    </p>
+                    <ul class="bulletList">
+                      <li>
+                        Hotel selection aligned to your academy &amp; schedule
+                      </li>
+                      <li>
+                        Premium options with Meli&aacute; and comparable 4–5★
+                        stays
+                      </li>
+                      <li>
+                        Early check-in / late check-out requests when available
+                      </li>
+                      <li>Room blocks and upgrades for teams &amp; groups</li>
+                    </ul>
+                    <a
+                      class="btn btn--ghost btn--ghostLight"
+                      href="index.html#contact"
+                      >Request accommodation</a
+                    >
+                  </div>
+                  <div
+                    class="tabsMedia tabsMedia--withArrows"
+                    data-exp-media="accommodation"
+                    tabindex="0"
+                    role="group"
+                    aria-label="Accommodation photos"
+                  >
+                    <button
+                      class="iconBtn tabsMedia__arrow tabsMedia__arrow--prev"
+                      type="button"
+                      data-exp-prev
+                      aria-label="Previous accommodation image"
+                    >
+                      ←
+                    </button>
+                    <div class="tabsMedia__viewport">
+                      <img
+                        class="tabsMedia__img"
+                        src="assets/img/city-marbella.jpg"
+                        alt="Accommodation experience photo 1"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                    <button
+                      class="iconBtn tabsMedia__arrow tabsMedia__arrow--next"
+                      type="button"
+                      data-exp-next
+                      aria-label="Next accommodation image"
+                    >
+                      →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tabsPanel" role="tabpanel" data-panel="transport">
+                <div class="tabsGrid">
+                  <div class="tabsCopy">
+                    <h3 class="tabsTitle">Transport &amp; Chauffeur</h3>
+                    <p class="tabsKicker">
+                      Mobility partners:
+                      <strong>Centauro + Private Chauffeur</strong>
+                    </p>
+                    <ul class="bulletList">
+                      <li>Airport transfers and door-to-door scheduling</li>
+                      <li>
+                        Car rental with Centauro (or equivalent) for full
+                        flexibility
+                      </li>
+                      <li>
+                        Private chauffeur option for premium comfort &amp;
+                        timing
+                      </li>
+                      <li>
+                        Training-day logistics coordinated around your itinerary
+                      </li>
+                    </ul>
+                    <a
+                      class="btn btn--ghost btn--ghostLight"
+                      href="index.html#contact"
+                      >Arrange transport</a
+                    >
+                  </div>
+                  <div
+                    class="tabsMedia tabsMedia--withArrows"
+                    data-exp-media="transport"
+                    tabindex="0"
+                    role="group"
+                    aria-label="Transport photos"
+                  >
+                    <button
+                      class="iconBtn tabsMedia__arrow tabsMedia__arrow--prev"
+                      type="button"
+                      data-exp-prev
+                      aria-label="Previous transport image"
+                    >
+                      ←
+                    </button>
+                    <div class="tabsMedia__viewport">
+                      <img
+                        class="tabsMedia__img"
+                        src="assets/img/city-barcelona.jpg"
+                        alt="Transport and chauffeur experience photo 1"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                    <button
+                      class="iconBtn tabsMedia__arrow tabsMedia__arrow--next"
+                      type="button"
+                      data-exp-next
+                      aria-label="Next transport image"
+                    >
+                      →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tabsPanel" role="tabpanel" data-panel="gastronomy">
+                <div class="tabsGrid">
+                  <div class="tabsCopy">
+                    <h3 class="tabsTitle">Gastronomy</h3>
+                    <p class="tabsKicker">
+                      Signature spot: <strong>Pab&uacute;</strong>
+                    </p>
+                    <ul class="bulletList">
+                      <li>
+                        Restaurant reservations curated for your dates and city
+                      </li>
+                      <li>
+                        Pab&uacute; and other top venues — tapas to fine dining
+                      </li>
+                      <li>
+                        Athlete-friendly menus on request (high-protein /
+                        recovery)
+                      </li>
+                      <li>Local recommendations beyond the tourist routes</li>
+                    </ul>
+                    <a
+                      class="btn btn--ghost btn--ghostLight"
+                      href="index.html#contact"
+                      >Curate my itinerary</a
+                    >
+                  </div>
+                  <div
+                    class="tabsMedia tabsMedia--withArrows"
+                    data-exp-media="gastronomy"
+                    tabindex="0"
+                    role="group"
+                    aria-label="Gastronomy photos"
+                  >
+                    <button
+                      class="iconBtn tabsMedia__arrow tabsMedia__arrow--prev"
+                      type="button"
+                      data-exp-prev
+                      aria-label="Previous gastronomy image"
+                    >
+                      ←
+                    </button>
+                    <div class="tabsMedia__viewport">
+                      <img
+                        class="tabsMedia__img"
+                        src="assets/img/city-bilbao.jpg"
+                        alt="Gastronomy experience photo 1"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                    <button
+                      class="iconBtn tabsMedia__arrow tabsMedia__arrow--next"
+                      type="button"
+                      data-exp-next
+                      aria-label="Next gastronomy image"
+                    >
+                      →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- JOURNEY (TIMELINE) -->
+      <section class="section section--dark" id="journey">
+        <div class="container">
+          <div class="sectionHead sectionHead--dark">
+            <h2 class="sectionHead__title">Your Meridian journey</h2>
+            <p class="sectionHead__subtitle">
+              A premium experience is built in layers — every step is
+              coordinated for you.
+            </p>
+          </div>
+
+          <div class="timeline" data-timeline>
+            <div class="timeline__line" aria-hidden="true"></div>
+
+            <article class="timelineItem is-active" data-timeline-item>
+              <div class="timelineItem__dot" aria-hidden="true"></div>
+              <div class="timelineItem__card card card--glass">
+                <h3 class="timelineItem__title">Discovery call</h3>
+                <p class="timelineItem__text">
+                  We learn your goals, level and preferred dates.
+                </p>
+              </div>
+            </article>
+
+            <article class="timelineItem" data-timeline-item>
+              <div class="timelineItem__dot" aria-hidden="true"></div>
+              <div class="timelineItem__card card card--glass">
+                <h3 class="timelineItem__title">Design &amp; booking</h3>
+                <p class="timelineItem__text">
+                  Academy sessions, courts, matches, transfers and hotels — all
+                  aligned.
+                </p>
+              </div>
+            </article>
+
+            <article class="timelineItem" data-timeline-item>
+              <div class="timelineItem__dot" aria-hidden="true"></div>
+              <div class="timelineItem__card card card--glass">
+                <h3 class="timelineItem__title">On-the-ground support</h3>
+                <p class="timelineItem__text">
+                  Bilingual coordination from Madrid &amp; Doha throughout your
+                  trip.
+                </p>
+              </div>
+            </article>
+
+            <article class="timelineItem" data-timeline-item>
+              <div class="timelineItem__dot" aria-hidden="true"></div>
+              <div class="timelineItem__card card card--glass">
+                <h3 class="timelineItem__title">Play, enjoy, repeat</h3>
+                <p class="timelineItem__text">
+                  Training + experiences + leisure — with a plan that feels
+                  effortless.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE INTRO -->
+      <section class="section section--soft">
+        <div class="container">
+          <div class="sectionHead">
+            <h1 class="sectionHead__title">Meridian Journey</h1>
+            <p class="sectionHead__subtitle">
+              A premium experience is built in layers — we handle planning,
+              logistics and coordination so you can focus on training.
+            </p>
+          </div>
+
+          <div class="grid2">
+            <div class="card card--glass">
+              <h3 class="card__title">Designed around your goals</h3>
+              <p class="card__text">
+                Tell us your level, dates and what you want to improve — we
+                tailor the plan.
+              </p>
+            </div>
+            <div class="card card--glass">
+              <h3 class="card__title">Coordinated end-to-end</h3>
+              <p class="card__text">
+                Academy sessions, matches, transfers and hotels aligned to your
+                schedule.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOW IT WORKS -->
+      <section class="section section--soft" id="how">
+        <div class="container">
+          <div class="sectionHead">
+            <h2 class="sectionHead__title">How it works</h2>
+            <p class="sectionHead__subtitle">
+              Three simple steps — we handle planning, logistics and
+              coordination so you can focus on training.
+            </p>
+          </div>
+
+          <div class="stepsGrid" id="howSteps">
+            <article class="stepCard" data-step="1">
+              <div class="stepCard__num">01</div>
+              <h3 class="stepCard__title">Share your goals</h3>
+              <p class="stepCard__text">
+                Tell us your dates, city, level and what you want to improve.
+              </p>
+            </article>
+
+            <article class="stepCard" data-step="2">
+              <div class="stepCard__num">02</div>
+              <h3 class="stepCard__title">We design the plan</h3>
+              <p class="stepCard__text">
+                Training, matches, transfers and hospitality — perfectly aligned
+                to your schedule.
+              </p>
+            </article>
+
+            <article class="stepCard" data-step="3">
+              <div class="stepCard__num">03</div>
+              <h3 class="stepCard__title">You play — we handle the rest</h3>
+              <p class="stepCard__text">
+                On-the-ground support in Spain and Doha for a smooth premium
+                experience.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p class="footer__copy">
+        © <span id="year"></span> Meridian Padel. All rights reserved.
+      </p>
+      <div class="footer__social">
+        <a
+          class="footer__link"
+          href="https://www.instagram.com/meridianpadel/"
+          target="_blank"
+          rel="noopener"
+          >Instagram</a
+        >
+        <span class="footer__sep">•</span>
+        <a
+          class="footer__link"
+          href="https://www.tiktok.com/@meridianpadel"
+          target="_blank"
+          rel="noopener"
+          >TikTok</a
+        >
+      </div>
+    </footer>
+  </body>
+</html>

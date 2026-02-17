@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" role="img" aria-label="Spain map">
+  <defs>
+    <pattern id="mpDots" width="32" height="32" patternUnits="userSpaceOnUse">
+      <circle cx="5" cy="5" r="3.2" fill="#ffffff" opacity="0.22"/>
+    </pattern>
+    <filter id="mpSoftEdge" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Mainland -->
+  <path d="M195.4 513.7 L190.5 494.0 L212.5 471.6 L220.7 455.5 L200.2 437.8 L216.6 398.7 L192.7 363.0 L218.5 358.1 L220.9 329.9 L230.5 321.2 L231.3 274.8 L258.8 258.7 L242.2 228.8 L207.5 226.7 L197.3 234.3 L162.1 234.3 L147.2 205.2 L122.9 213.9 L101.3 229.0 L104.3 186.6 L80.0 160.8 L164.2 117.8 L237.0 128.6 L317.0 128.2 L380.3 138.3 L525.9 137.2 L549.6 160.3 L659.2 187.4 L680.8 174.5 L747.8 201.4 L816.8 193.7 L820.0 228.3 L763.6 267.9 L687.3 280.5 L682.0 300.6 L645.4 333.6 L622.5 382.0 L645.7 416.0 L611.3 442.6 L598.4 481.3 L553.5 493.1 L511.3 538.9 L379.0 538.7 L341.8 559.7 L319.0 582.2 L289.9 577.2 L267.9 557.1 L251.0 522.9 Z"
+        filter="url(#mpSoftEdge)"
+        fill="url(#mpDots)"
+        stroke="#ffffff"
+        stroke-opacity="0.18"
+        stroke-width="4"
+        stroke-linejoin="round"/>
+
+  <!-- Balearic islands (approximate) -->
+  <g opacity="0.9" filter="url(#mpSoftEdge)">
+    <circle cx="811.7" cy="364.7" r="16" fill="url(#mpDots)" stroke="#ffffff" stroke-opacity="0.16" stroke-width="3"/>
+    <circle cx="883.1" cy="346.9" r="10" fill="url(#mpDots)" stroke="#ffffff" stroke-opacity="0.14" stroke-width="2"/>
+    <circle cx="722.4" cy="406.4" r="9" fill="url(#mpDots)" stroke="#ffffff" stroke-opacity="0.14" stroke-width="2"/>
+  </g>
+</svg>

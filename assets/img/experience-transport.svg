@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Transport and Chauffeur featuring Centauro">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#050506"/>
+      <stop offset="1" stop-color="#232323"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="60%" cy="35%" r="60%">
+      <stop offset="0" stop-color="#f2d081" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#f2d081" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="980" cy="260" r="520" fill="url(#glow)"/>
+  <circle cx="360" cy="620" r="220" fill="#f2d081" opacity="0.05" filter="url(#soft)"/>
+
+  <!-- Route line -->
+  <path d="M180 680 C 380 520, 560 640, 760 520 S 1100 460, 1320 300" fill="none" stroke="#ffffff" stroke-opacity="0.09" stroke-width="5"/>
+  <path d="M180 720 C 380 560, 560 680, 780 560 S 1120 520, 1400 360" fill="none" stroke="#f2d081" stroke-opacity="0.14" stroke-width="4"/>
+
+  <!-- Car + chauffeur icon -->
+  <g transform="translate(250 250)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- car body -->
+    <path d="M120 360 h380 l70 90 v90 h-520 v-90z" stroke="#f2d081" stroke-width="12"/>
+    <path d="M210 360 l55-95 h220 l55 95" stroke="#f2d081" stroke-width="12"/>
+    <path d="M300 290 h140" stroke="#ffffff" stroke-opacity="0.25" stroke-width="10"/>
+
+    <!-- wheels -->
+    <circle cx="220" cy="540" r="58" stroke="#ffffff" stroke-opacity="0.25" stroke-width="12"/>
+    <circle cx="520" cy="540" r="58" stroke="#ffffff" stroke-opacity="0.25" stroke-width="12"/>
+    <circle cx="220" cy="540" r="22" stroke="#f2d081" stroke-opacity="0.9" stroke-width="10"/>
+    <circle cx="520" cy="540" r="22" stroke="#f2d081" stroke-opacity="0.9" stroke-width="10"/>
+
+    <!-- chauffeur silhouette -->
+    <path d="M640 290 c40 0 72 32 72 72 s-32 72-72 72-72-32-72-72 32-72 72-72z" stroke="#f2d081" stroke-width="12"/>
+    <path d="M590 470 c18-34 46-52 78-52 32 0 60 18 78 52" stroke="#ffffff" stroke-opacity="0.22" stroke-width="12"/>
+    <path d="M612 330 c10 8 18 10 28 10 10 0 18-2 28-10" stroke="#ffffff" stroke-opacity="0.22" stroke-width="10"/>
+  </g>
+
+  <!-- Labels -->
+  <g font-family="'Open Sans Condensed','Open Sans',Arial,sans-serif" text-rendering="geometricPrecision">
+    <text x="260" y="740" font-size="76" fill="#ffffff" fill-opacity="0.92" letter-spacing="1">Transport &amp; Chauffeur</text>
+    <text x="260" y="808" font-size="46" fill="#f2d081" fill-opacity="0.95" letter-spacing="2">CENTAURO • PRIVATE DRIVER</text>
+    <text x="260" y="856" font-size="28" fill="#ffffff" fill-opacity="0.62" letter-spacing="1">airport transfers • rental cars • door-to-door timing</text>
+  </g>
+</svg>

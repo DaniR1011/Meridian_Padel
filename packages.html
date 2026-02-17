@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meridian Padel</title>
+    <meta
+      name="description"
+      content="Explore Meridian Padel packages: curated training camps and premium logistics, with optional hospitality."
+    />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300;700&amp;display=swap"
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" href="assets/favicon/favicon.ico" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/favicon/favicon-32x32.png"
+    />
+    <link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png" />
+
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="main.js"></script>
+  </head>
+
+  <body class="page page--packages">
+    <div class="bg-orbs" aria-hidden="true"></div>
+
+    <header class="header">
+      <div class="container header__inner">
+        <a class="brand" href="index.html" aria-label="Meridian Padel Home">
+          <span class="brand__logo">
+            <img
+              class="brand__logoImg"
+              src="assets/img/logo-meridian.png"
+              alt="Meridian Padel logo"
+            />
+          </span>
+          <span class="brand__text">
+            <span class="brand__name">Meridian Padel</span>
+          </span>
+        </a>
+
+        <button
+          class="navToggle"
+          type="button"
+          aria-controls="primary-nav"
+          aria-expanded="false"
+        >
+          <span></span><span></span><span></span>
+        </button>
+
+        <nav class="nav" id="primary-nav" aria-label="Primary navigation">
+          <a class="nav__link" href="index.html">Home</a>
+          <a class="nav__link" href="who-we-are.html">Who We Are</a>
+          <a class="nav__link" href="meridian-journey.html">Meridian Journey</a>
+          <a class="nav__link" href="cities.html">Cities</a>
+          <a class="nav__link" href="packages.html" aria-current="page"
+            >Packages</a
+          >
+          <!-- <a class="nav__cta" href="index.html#contact">Contact</a> -->
+        </nav>
+      </div>
+    </header>
+
+    <a class="floatingEmailBtn" href="#packages-contact" aria-label="Email us">
+      <span>Email Us</span>
+    </a>
+
+    <main class="page__content" id="top">
+      <!-- EXPERIENCE BUILDER (WOW) -->
+      <section class="section" id="experience-builder">
+        <div class="container">
+          <div class="sectionHead">
+            <h2 class="sectionHead__title">Build your experience</h2>
+            <p class="sectionHead__subtitle">
+              Select a destination, duration and add-ons — your request message
+              gets pre-filled automatically.
+            </p>
+          </div>
+
+          <div
+            class="eb"
+            data-experience-builder
+            data-eb-target="#packages-contact"
+          >
+            <div class="eb__panel card card--glass">
+              <div class="eb__grid">
+                <div class="formRow">
+                  <label>City</label>
+                  <select name="city" data-mp-select>
+                    <option value="Madrid">Madrid</option>
+                    <option value="Barcelona">Barcelona</option>
+                    <option value="Bilbao">Bilbao</option>
+                    <option value="Alicante">Alicante</option>
+                    <option value="Marbella">Marbella</option>
+                    <option value="Mallorca">Mallorca</option>
+                  </select>
+                </div>
+
+                <div class="formRow">
+                  <label>Days</label>
+                  <select name="days" data-mp-select>
+                    <option value="3">3</option>
+                    <option value="5" selected>5</option>
+                    <option value="7">7</option>
+                    <option value="Customize">Customize</option>
+                  </select>
+                </div>
+
+                <div class="formRow">
+                  <label>Package level</label>
+                  <select name="level" data-mp-select>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate" selected>Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                  </select>
+                </div>
+
+                <div class="formRow">
+                  <label>Group size</label>
+                  <input
+                    name="group"
+                    type="number"
+                    min="1"
+                    max="50"
+                    value="4"
+                  />
+                </div>
+              </div>
+
+              <div class="eb__addons" aria-label="Add-ons">
+                <button class="ebAddOn" type="button" data-addon="Hotel">
+                  Hotel
+                </button>
+                <button class="ebAddOn" type="button" data-addon="Transport">
+                  Transport
+                </button>
+                <button class="ebAddOn" type="button" data-addon="Restaurants">
+                  Restaurants
+                </button>
+                <button class="ebAddOn" type="button" data-addon="Corporate">
+                  Corporate
+                </button>
+              </div>
+
+              <p class="muted eb__hint">
+                Tip: you can see your selection in the live preview below.
+              </p>
+            </div>
+
+            <aside class="eb__summary card card--glass">
+              <div class="ebSummary__top">
+                <h3 class="card__title">Live preview</h3>
+                <p class="muted">
+                  We’ll adapt it to your dates and availability.
+                </p>
+              </div>
+
+              <div class="ebSummary__items" data-eb-summary></div>
+
+              <div class="ebSummary__actions">
+                <button class="btn btn--primary" type="button" data-eb-send>
+                  Send request <span class="btn__icon">→</span>
+                </button>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- ITINERARY (WOW) -->
+      <section class="section" id="itinerary">
+        <div class="container">
+          <div class="sectionHead">
+            <h2 class="sectionHead__title">Sample itinerary</h2>
+            <p class="sectionHead__subtitle">
+              A premium camp preview — pick 3, 5 or 7 days. Then customize it in
+              the builder.
+            </p>
+          </div>
+
+          <div class="itinerary card card--glass" data-itinerary>
+            <div
+              class="itinerary__tabs"
+              role="tablist"
+              aria-label="Select duration"
+            >
+              <button
+                class="itTab is-active"
+                type="button"
+                role="tab"
+                aria-selected="true"
+                data-days="3"
+              >
+                3 days
+              </button>
+              <button
+                class="itTab"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-days="5"
+              >
+                5 days
+              </button>
+              <button
+                class="itTab"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-days="7"
+              >
+                7 days
+              </button>
+            </div>
+            <div class="itinerary__body" data-itinerary-body></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE INTRO -->
+      <section class="section section--soft">
+        <div class="container">
+          <div class="sectionHead">
+            <h1 class="sectionHead__title">Packages</h1>
+            <p class="sectionHead__subtitle">
+              Choose the experience level you want — from focused training to
+              full-service logistics and premium hospitality.
+            </p>
+          </div>
+
+          <div class="grid2">
+            <div class="card card--glass">
+              <h3 class="card__title">Fully tailored</h3>
+              <p class="card__text">
+                Every package adapts to your level, goals, dates and destination
+                — we build the plan around you.
+              </p>
+            </div>
+            <div class="card card--glass">
+              <h3 class="card__title">One point of contact</h3>
+              <p class="card__text">
+                We coordinate clubs, coaches, transport and optional hospitality
+                so your trip feels effortless.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PACKAGES -->
+      <section class="section" id="packages">
+        <div class="container">
+          <div class="sectionHead">
+            <h2 class="sectionHead__title">Pick your level</h2>
+            <p class="sectionHead__subtitle">
+              A clean comparison — then we tailor the details based on your
+              group.
+            </p>
+          </div>
+
+          <div class="teamGrid">
+            <article class="card card--glass">
+              <h3 class="card__title">Essentials</h3>
+              <p class="card__text">
+                Best for players who want focused sessions and minimal planning.
+              </p>
+              <div class="chipRow">
+                <span class="chip chip--gold">Training plan</span>
+                <span class="chip">Academy coordination</span>
+                <span class="chip">Scheduling</span>
+              </div>
+              <p class="card__text" style="margin-top: 12px">
+                Includes: training sessions, match planning, itinerary structure
+                and local coordination with the academy.
+              </p>
+            </article>
+
+            <article class="card card--glass">
+              <h3 class="card__title">Performance</h3>
+              <p class="card__text">
+                Best for groups who want training + seamless mobility and daily
+                logistics.
+              </p>
+              <div class="chipRow">
+                <span class="chip chip--gold">Training plan</span>
+                <span class="chip chip--bronze">Transfers</span>
+                <span class="chip">Daily logistics</span>
+              </div>
+              <p class="card__text" style="margin-top: 12px">
+                Includes: everything in Essentials + airport transfers,
+                day-to-day transport coordination and timing management.
+              </p>
+            </article>
+
+            <article class="card card--glass">
+              <h3 class="card__title">Elite</h3>
+              <p class="card__text">
+                Best for premium trips where hospitality and guest care are part
+                of the experience.
+              </p>
+              <div class="chipRow">
+                <span class="chip chip--gold">Training plan</span>
+                <span class="chip chip--bronze">Transfers</span>
+                <span class="chip chip--red">Hospitality</span>
+              </div>
+              <p class="card__text" style="margin-top: 12px">
+                Includes: everything in Performance + premium accommodation
+                options, concierge-style support and curated leisure.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="section section--soft" id="packages-contact">
+        <div class="container">
+          <div class="sectionHead">
+            <h2 class="sectionHead__title">Contact</h2>
+            <p class="sectionHead__subtitle">
+              Tell us your dates, city and goals — we’ll tailor the right
+              package for you.
+            </p>
+          </div>
+
+          <div class="contactGrid">
+            <div class="contactCard">
+              <h3>Get in touch</h3>
+              <p class="muted">You can contact us directly:</p>
+
+              <div class="contactLine">
+                <span class="contactLine__icon">✉️</span>
+                <a href="mailto:meridianpadel@gmail.com"
+                  >meridianpadel@gmail.com</a
+                >
+              </div>
+
+              <div class="contactLine">
+                <span class="contactLine__icon">📍</span>
+                <span>Doha ↔ Spain</span>
+              </div>
+            </div>
+
+            <!-- Formspree: replace FORM_ID with your form endpoint id (from Dashboard → Integration)
+                 Example: https://formspree.io/f/abcde123 -->
+            <form
+              class="formCard"
+              method="POST"
+              action="https://formspree.io/f/FORM_ID"
+              accept-charset="UTF-8"
+            >
+              <!-- Honeypot anti-spam (bots will often fill hidden fields) -->
+              <div style="display: none">
+                <label>Leave this field empty</label>
+                <input
+                  type="text"
+                  name="_gotcha"
+                  tabindex="-1"
+                  autocomplete="off"
+                />
+              </div>
+
+              <!-- Email subject (supports variables like {{ name }} / {{ topic }}) -->
+              <input
+                type="hidden"
+                name="subject"
+                value="Meridian Padel — {{ topic }} — {{ name }}"
+              />
+
+              <!-- Metadata -->
+              <input type="hidden" name="source_page" value="Packages" />
+              <input type="hidden" name="page_url" value="" />
+
+              <div class="formRow">
+                <label for="name">Name</label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autocomplete="name"
+                  placeholder="Your full name"
+                  required
+                />
+              </div>
+
+              <div class="formRow">
+                <label for="email">Email</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  placeholder="you@email.com"
+                  required
+                />
+              </div>
+
+              <div class="formRow">
+                <label for="topic">Topic</label>
+                <select id="topic" name="topic" data-mp-select aria-required="true">
+                  <option value="Packages" selected>Packages</option>
+                  <option value="Training Camp">Training Camp</option>
+                  <option value="Corporate Program">Corporate Program</option>
+                  <option value="Sponsorship">Sponsorship</option>
+                  <option value="Partnership">Partnership</option>
+                </select>
+              </div>
+
+              <div class="formRow">
+                <label for="message">Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="5"
+                  placeholder="Tell us what you need"
+                  required
+                ></textarea>
+              </div>
+
+              <button class="btn btn--primary btn--full" type="submit">
+                Send message
+                <span class="btn__icon">→</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p class="footer__copy">
+        © <span id="year"></span> Meridian Padel. All rights reserved.
+      </p>
+      <div class="footer__social">
+        <a
+          class="footer__link"
+          href="https://www.instagram.com/meridianpadel/"
+          target="_blank"
+          rel="noopener"
+          >Instagram</a
+        >
+        <span class="footer__sep">•</span>
+        <a
+          class="footer__link"
+          href="https://www.tiktok.com/@meridianpadel"
+          target="_blank"
+          rel="noopener"
+          >TikTok</a
+        >
+      </div>
+    </footer>
+  </body>
+</html>

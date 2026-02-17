@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meridian Padel</title>
+    <meta
+      name="description"
+      content="Meridian Padel connects Madrid and Doha with premium padel experiences, training camps and corporate programs."
+    />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300;700&amp;display=swap"
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" href="assets/favicon/favicon.ico" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/favicon/favicon-32x32.png"
+    />
+    <link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png" />
+
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="main.js"></script>
+  </head>
+
+  <body class="page page--home">
+    <!-- Decorative background -->
+    <div class="bg-orbs" aria-hidden="true"></div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="container header__inner">
+        <a class="brand" href="index.html" aria-label="Meridian Padel Home">
+          <span class="brand__logo">
+            <img
+              class="brand__logoImg"
+              src="assets/img/logo-meridian.png"
+              alt="Meridian Padel logo"
+            />
+          </span>
+          <span class="brand__text">
+            <span class="brand__name">Meridian Padel</span>
+          </span>
+        </a>
+
+        <!-- Mobile hamburger -->
+        <button
+          class="navToggle"
+          type="button"
+          aria-controls="primary-nav"
+          aria-expanded="false"
+        >
+          <span></span><span></span><span></span>
+        </button>
+
+        <nav class="nav" id="primary-nav" aria-label="Primary navigation">
+          <a class="nav__link" href="index.html" aria-current="page">Home</a>
+          <a class="nav__link" href="who-we-are.html">Who We Are</a>
+          <a class="nav__link" href="meridian-journey.html">Meridian Journey</a>
+          <a class="nav__link" href="cities.html">Cities</a>
+          <a class="nav__link" href="packages.html">Packages</a>
+          <!-- <a class="nav__cta" href="index.html#contact">Contact</a> -->
+        </nav>
+      </div>
+    </header>
+
+    <main class="page__content" id="top">
+      <!-- SPONSORS -->
+      <section class="section sponsorsElegant" aria-label="Sponsors">
+        <div id="sponsorsMount"></div>
+      </section>
+
+      <!-- VIDEO CTA -->
+      <section class="videoCta" aria-label="Call to action">
+        <div class="container">
+          <div class="videoCta__card">
+            <video
+              class="videoCta__video"
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              poster="assets/img/hero.jpg"
+            >
+              <source src="assets/video/trailer.mp4" type="video/mp4" />
+            </video>
+            <div class="videoCta__overlay" aria-hidden="true"></div>
+
+            <div class="videoCta__content">
+              <h1 class="videoCta__title">
+                This is how the game is meant
+                <span class="videoCta__accent">to be lived</span>
+              </h1>
+              <p class="videoCta__subtitle">Play · Travel · Indulge</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DESTINATION CITIES (Interactive) -->
+      <section class="section section--soft" id="destinations">
+        <div class="container">
+          <div class="destinationsCard" data-destinations>
+            <div class="destinationsHead">
+              <div class="kicker">
+                <span class="kicker__line" aria-hidden="true"></span>
+                <span>Destination Cities</span>
+              </div>
+              <h2 class="destinationsTitle">
+                Train in Spain,<br /><span
+                  >where padel is lived with passion</span
+                >
+              </h2>
+              <p class="destinationsSubtitle">
+                Click on a destination to explore where Meridian operates —
+                we’ll tailor the full plan around your goals.
+              </p>
+            </div>
+
+            <div class="destinationsGrid">
+              <div class="destinationsMap">
+                <div
+                  class="destinationsMap__canvas"
+                  aria-label="Map of Spain with destinations"
+                >
+                  <img
+                    class="destinationsMap__img"
+                    src="assets/img/map-iberia.svg"
+                    alt="Stylized map of Spain"
+                    loading="lazy"
+                    decoding="async"
+                  />
+
+                  <!--
+                  City points are positioned in % relative to the SVG (viewBox 900x700).
+                  Updated to better match real geography, especially Barcelona.
+                -->
+                  <button
+                    class="destinationsPoint is-active"
+                    type="button"
+                    data-city="madrid"
+                    style="--x: 49.6%; --y: 49.6%"
+                    aria-label="Madrid"
+                  ></button>
+                  <button
+                    class="destinationsPoint"
+                    type="button"
+                    data-city="barcelona"
+                    style="--x: 82.6%; --y: 37.4%"
+                    aria-label="Barcelona"
+                  ></button>
+                  <button
+                    class="destinationsPoint"
+                    type="button"
+                    data-city="bilbao"
+                    style="--x: 50.4%; --y: 21.6%"
+                    aria-label="Bilbao"
+                  ></button>
+                  <button
+                    class="destinationsPoint"
+                    type="button"
+                    data-city="alicante"
+                    style="--x: 65.9%; --y: 63.2%"
+                    aria-label="Alicante"
+                  ></button>
+                  <button
+                    class="destinationsPoint"
+                    type="button"
+                    data-city="marbella"
+                    style="--x: 38.2%; --y: 78.8%"
+                    aria-label="Marbella"
+                  ></button>
+                  <button
+                    class="destinationsPoint"
+                    type="button"
+                    data-city="mallorca"
+                    style="--x: 88.8%; --y: 52.5%"
+                    aria-label="Mallorca"
+                  ></button>
+                </div>
+                <p class="destinationsHint">
+                  Tip: tap a point to update the destination card.
+                </p>
+              </div>
+
+              <div class="destinationsPanel">
+                <div class="destinationsCityCard" aria-live="polite">
+                  <div class="destinationsCityMedia">
+                    <img
+                      id="destCityImg"
+                      src="assets/img/city-madrid.jpg"
+                      alt="Madrid"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <div
+                      class="destinationsCityOverlay"
+                      aria-hidden="true"
+                    ></div>
+                  </div>
+
+                  <div class="destinationsCityBody">
+                    <div class="destinationsCityTop">
+                      <div class="destinationsFlag" aria-hidden="true">🇪🇸</div>
+                      <h3 id="destCityName">Madrid</h3>
+                    </div>
+                    <p id="destCityDesc">
+                      Elite academies, premium hospitality and high-performance
+                      training environment.
+                    </p>
+
+                    <div class="destinationsNav">
+                      <button
+                        class="iconBtn destinationsNav__btn"
+                        type="button"
+                        data-dest-prev
+                        aria-label="Previous city"
+                      >
+                        ←
+                      </button>
+                      <button
+                        class="iconBtn destinationsNav__btn"
+                        type="button"
+                        data-dest-next
+                        aria-label="Next city"
+                      >
+                        →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CITIES TICKER (Thin scroll) -->
+      <section class="citiesTicker" aria-label="Operating cities">
+        <div class="container">
+          <div class="citiesTicker__bar">
+            <span class="citiesTicker__dot" aria-hidden="true"></span>
+            <span class="citiesTicker__label">Operating cities</span>
+            <div class="citiesTicker__marquee" aria-hidden="true">
+              <div class="citiesTicker__track">
+                <div class="citiesTicker__group">
+                  <span class="citiesTicker__item">Alicante</span
+                  ><span class="citiesTicker__sep">•</span>
+                  <span class="citiesTicker__item">Barcelona</span
+                  ><span class="citiesTicker__sep">•</span>
+                  <span class="citiesTicker__item">Bilbao</span
+                  ><span class="citiesTicker__sep">•</span>
+                  <span class="citiesTicker__item">Madrid</span
+                  ><span class="citiesTicker__sep">•</span>
+                  <span class="citiesTicker__item">Mallorca</span
+                  ><span class="citiesTicker__sep">•</span>
+                  <span class="citiesTicker__item">Marbella</span
+                  ><span class="citiesTicker__sep">•</span>
+                </div>
+                <div class="citiesTicker__group" aria-hidden="true">
+                  <span class="citiesTicker__item">Alicante</span
+                  ><span class="citiesTicker__sep">•</span>
+                  <span class="citiesTicker__item">Barcelona</span
+                  ><span class="citiesTicker__sep">•</span>
+                  <span class="citiesTicker__item">Bilbao</span
+                  ><span class="citiesTicker__sep">•</span>
+                  <span class="citiesTicker__item">Madrid</span
+                  ><span class="citiesTicker__sep">•</span>
+                  <span class="citiesTicker__item">Mallorca</span
+                  ><span class="citiesTicker__sep">•</span>
+                  <span class="citiesTicker__item">Marbella</span
+                  ><span class="citiesTicker__sep">•</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SOLUTIONS -->
+      <section class="section" id="solutions">
+        <div class="container">
+          <div class="sectionHead">
+            <h2 class="sectionHead__title">The challenge we tackle</h2>
+            <p class="sectionHead__subtitle">
+              Players and corporate groups want premium training in Spain
+              without the friction of planning, logistics and local
+              coordination.
+            </p>
+          </div>
+
+          <div class="solutionsGrid">
+            <div class="feature">
+              <div class="feature__icon">🎯</div>
+              <h3 class="feature__title">Personalized training experiences</h3>
+              <p class="feature__text">
+                Tailored programs in Spain or the Middle East, aligned with
+                objectives.
+              </p>
+            </div>
+            <div class="feature">
+              <div class="feature__icon">🏟️</div>
+              <h3 class="feature__title">Premium training &amp; events</h3>
+              <p class="feature__text">
+                Elite sessions with flexible schedules and exclusive academy
+                access.
+              </p>
+            </div>
+            <div class="feature">
+              <div class="feature__icon">🏨</div>
+              <h3 class="feature__title">Hospitality packages</h3>
+              <p class="feature__text">
+                Luxury accommodation near venues + concierge support and guest
+                care.
+              </p>
+            </div>
+            <div class="feature">
+              <div class="feature__icon">🚘</div>
+              <h3 class="feature__title">Transport &amp; logistics</h3>
+              <p class="feature__text">
+                Airport transfers, daily commutes, punctual and comfortable
+                mobility.
+              </p>
+            </div>
+            <div class="feature">
+              <div class="feature__icon">🍽️</div>
+              <h3 class="feature__title">Tourism &amp; leisure</h3>
+              <p class="feature__text">
+                Gastronomy, culture and VIP experiences curated around
+                interests.
+              </p>
+            </div>
+            <div class="feature">
+              <div class="feature__icon">🤝</div>
+              <h3 class="feature__title">Corporate programs</h3>
+              <p class="feature__text">
+                Events, venues, consulting and strategic Europe ↔ Middle East
+                networking.
+              </p>
+            </div>
+            <div class="feature">
+              <div class="feature__icon">🌍</div>
+              <h3 class="feature__title">Dual headquarters operation</h3>
+              <p class="feature__text">
+                Bilingual support from Madrid &amp; Doha for flawless
+                coordination.
+              </p>
+            </div>
+            <div class="feature">
+              <div class="feature__icon">📈</div>
+              <h3 class="feature__title">Scalable expansion vision</h3>
+              <p class="feature__text">
+                Future growth across UAE, Saudi Arabia, Kuwait and new
+                disciplines.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SOCIAL PROOF
+      <section class="section section--dark" id="proof">
+        <div class="container">
+          <div class="sectionHead sectionHead--dark">
+            <h2 class="sectionHead__title">Social proof</h2>
+            <p class="sectionHead__subtitle">
+              Sample quotes for now — swap them for real feedback when ready.
+            </p>
+          </div>
+
+          <div class="testimonials card card--glass" data-carousel>
+            <div class="testimonials__top">
+              <div>
+                <h3 class="testimonials__title">Testimonials</h3>
+                <p class="muted">
+                  Sample quotes — swap them for real feedback when ready.
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="testimonials__viewport"
+              aria-label="Testimonials carousel"
+            >
+              <button
+                class="iconBtn iconBtn--arrow iconBtn--prev"
+                type="button"
+                data-carousel-prev
+                aria-label="Previous testimonial"
+              >
+                ←
+              </button>
+              <button
+                class="iconBtn iconBtn--arrow iconBtn--next"
+                type="button"
+                data-carousel-next
+                aria-label="Next testimonial"
+              >
+                →
+              </button>
+
+              <div class="testimonials__track">
+                <article class="testimonial">
+                  <p class="testimonial__quote">
+                    “The Meridian team removes all friction: planning, timing,
+                    transfers — everything feels effortless.”
+                  </p>
+                  <div class="testimonial__meta">
+                    <span class="testimonial__name">Academy Partner</span
+                    ><span class="testimonial__role">Madrid</span>
+                  </div>
+                </article>
+                <article class="testimonial">
+                  <p class="testimonial__quote">
+                    “From the first message, the itinerary felt premium and
+                    fully coordinated. We just showed up and played.”
+                  </p>
+                  <div class="testimonial__meta">
+                    <span class="testimonial__name">Corporate Host</span
+                    ><span class="testimonial__role">Barcelona</span>
+                  </div>
+                </article>
+                <article class="testimonial">
+                  <p class="testimonial__quote">
+                    “High-level training plus hospitality done right — the
+                    details are what make Meridian stand out.”
+                  </p>
+                  <div class="testimonial__meta">
+                    <span class="testimonial__name">Coach</span
+                    ><span class="testimonial__role">Marbella</span>
+                  </div>
+                </article>
+              </div>
+            </div>
+
+            <div
+              class="dots"
+              data-carousel-dots
+              aria-label="Testimonials navigation"
+            ></div>
+          </div>
+        </div>
+      </section> -->
+
+      <!-- FAQ -->
+      <section class="section section--soft" id="faq">
+        <div class="container">
+          <div class="sectionHead">
+            <h2 class="sectionHead__title">Frequently asked questions</h2>
+            <p class="sectionHead__subtitle">
+              Quick answers to the most common questions about our experiences,
+              packages and logistics.
+            </p>
+          </div>
+
+          <div class="faqGrid">
+            <details class="faqItem card card--glass" open>
+              <summary class="faqQuestion">
+                <span>Where is Meridian Padel located?</span>
+              </summary>
+              <div class="faqAnswer">
+                <p>
+                  Meridian Padel is based in Doha, Qatar. It was established in
+                  January 2026.
+                </p>
+              </div>
+            </details>
+
+            <details class="faqItem card card--glass">
+              <summary class="faqQuestion">
+                <span>What does Meridian Padel offer?</span>
+              </summary>
+              <div class="faqAnswer">
+                <p>
+                  Meridian Padel creates high-level sports experiences,
+                  characterised by offering premium services in different cities
+                  across Spain. Our offer includes agreements with the best
+                  padel academies, accommodation in luxury hotels, chauffeur
+                  services and gastronomic experiences in high-end restaurants.
+                </p>
+              </div>
+            </details>
+
+            <details class="faqItem card card--glass">
+              <summary class="faqQuestion">
+                <span>Which cities does Meridian Padel offer?</span>
+              </summary>
+              <div class="faqAnswer">
+                <p>
+                  Meridian Padel launches services in the main cities of
+                  interest in Spain: Madrid, Barcelona, Mallorca, Marbella,
+                  Alicante and Bilbao. However, we are expanding rapidly and
+                  working to offer more destinations.
+                </p>
+              </div>
+            </details>
+
+            <details class="faqItem card card--glass">
+              <summary class="faqQuestion">
+                <span>How can I make a booking with Meridian Padel?</span>
+              </summary>
+              <div class="faqAnswer">
+                <p>
+                  Leave us your details and tell us which services you are
+                  interested on, and we will contact you.
+                </p>
+              </div>
+            </details>
+
+            <details class="faqItem card card--glass">
+              <summary class="faqQuestion">
+                <span
+                  >What can I do if I want to go to one of the destinations but
+                  for a different number of days than the packages
+                  offered?</span
+                >
+              </summary>
+              <div class="faqAnswer">
+                <p>
+                  Meridian Padel offers the possibility of purchasing
+                  pre-designed packages and also provides a fully personalised
+                  service tailored to the needs of each customer.
+                </p>
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="section section--soft" id="contact">
+        <div class="container">
+          <div class="sectionHead">
+            <h2 class="sectionHead__title">Contact</h2>
+            <p class="sectionHead__subtitle">
+              Tell us your goals and we’ll build the perfect experience.
+            </p>
+          </div>
+
+          <div class="contactGrid">
+            <div class="contactCard">
+              <h3>Get in touch</h3>
+              <p class="muted">You can contact us directly:</p>
+
+              <div class="contactLine">
+                <span class="contactLine__icon">✉️</span>
+                <a href="mailto:meridianpadel@gmail.com"
+                  >meridianpadel@gmail.com</a
+                >
+              </div>
+
+              <div class="contactLine">
+                <span class="contactLine__icon">📍</span>
+                <span>Doha ↔ Spain</span>
+              </div>
+            </div>
+
+            <!-- Formspree: replace FORM_ID with your form endpoint id (from Dashboard → Integration)
+                 Example: https://formspree.io/f/abcde123 -->
+            <form
+              class="formCard"
+              method="POST"
+              action="https://formspree.io/f/FORM_ID"
+              accept-charset="UTF-8"
+            >
+              <!-- Honeypot anti-spam (bots will often fill hidden fields) -->
+              <div style="display: none">
+                <label>Leave this field empty</label>
+                <input
+                  type="text"
+                  name="_gotcha"
+                  tabindex="-1"
+                  autocomplete="off"
+                />
+              </div>
+
+              <!-- Email subject (supports variables like {{ name }} / {{ topic }}) -->
+              <input
+                type="hidden"
+                name="subject"
+                value="Meridian Padel — {{ topic }} — {{ name }}"
+              />
+
+              <!-- Metadata -->
+              <input type="hidden" name="source_page" value="Home" />
+              <input type="hidden" name="page_url" value="" />
+
+              <div class="formRow">
+                <label for="name">Name</label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autocomplete="name"
+                  placeholder="Your full name"
+                  required
+                />
+              </div>
+
+              <div class="formRow">
+                <label for="email">Email</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  placeholder="you@email.com"
+                  required
+                />
+              </div>
+
+              <div class="formRow">
+                <label for="topic">Topic</label>
+                <select
+                  id="topic"
+                  name="topic"
+                  data-mp-select
+                  aria-required="true"
+                >
+                  <option value="" disabled selected>Select a topic</option>
+                  <option value="Training Camp">Training Camp</option>
+                  <option value="Corporate Program">Corporate Program</option>
+                  <option value="Sponsorship">Sponsorship</option>
+                  <option value="Partnership">Partnership</option>
+                </select>
+              </div>
+
+              <div class="formRow">
+                <label for="message">Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="5"
+                  placeholder="Tell us what you need"
+                  required
+                ></textarea>
+              </div>
+
+              <button class="btn btn--primary btn--full" type="submit">
+                Send message
+                <span class="btn__icon">→</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p class="footer__copy">
+        © <span id="year"></span> Meridian Padel. All rights reserved.
+      </p>
+      <div class="footer__social">
+        <a
+          class="footer__link"
+          href="https://www.instagram.com/meridianpadel/"
+          target="_blank"
+          rel="noopener"
+          >Instagram</a
+        >
+        <span class="footer__sep">•</span>
+        <a
+          class="footer__link"
+          href="https://www.tiktok.com/@meridianpadel"
+          target="_blank"
+          rel="noopener"
+          >TikTok</a
+        >
+      </div>
+    </footer>
+  </body>
+</html>
