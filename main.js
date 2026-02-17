@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('input[name="page_url"]').forEach((el) => {
     el.value = window.location.href
   })
+
   // =======================================================
   // 2.2) Custom select (Topic + Builder selects)
   //      Uses a portal (menu appended to <body>) so it
@@ -395,21 +396,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const baseGroup = document.querySelector('.sponsorGroup--base')
     if (!marquee || !track || !baseGroup) return
 
-    // -----------------------------------------------------------------
-    // Robustness (mobile + back/forward cache):
-    // Some mobile browsers can restore the Home from bfcache without re-running
-    // DOMContentLoaded, and CSS animations may fall back to the default duration.
-    // Also, multiple rapid rebuild triggers (load + resize) can race.
-    //
-    // Solution:
-    //  - Run the measurement on the next paint.
-    //  - Allow only the latest run to apply the computed duration.
-    // -----------------------------------------------------------------
     setupSponsorsInfiniteLoop._runId =
       (setupSponsorsInfiniteLoop._runId || 0) + 1
     const runId = setupSponsorsInfiniteLoop._runId
 
-    // ✅ Si ya se había inicializado antes (p.ej. al hacer resize), volvemos al estado "semilla"
     const seedCount = Math.max(
       1,
       parseInt(
@@ -421,41 +411,28 @@ document.addEventListener('DOMContentLoaded', () => {
       baseGroup.removeChild(baseGroup.lastElementChild)
     }
 
-    // ✅ 1) Limpiamos duplicados si existen (por si recargas/resizes)
     track
       .querySelectorAll(".sponsorGroup[aria-hidden='true']")
       .forEach((n) => n.remove())
 
-    // ✅ 2) Medimos en el próximo paint (con CSS responsive ya aplicado)
-    // Nota: NO dependemos de que las imágenes terminen de cargar porque el ancho
-    // real lo fija .sponsorLogoBox (cajas con width/height fijos). Esto evita que
-    // el cálculo se quede en fallback (p.ej. 50s) cuando los <img loading="lazy">
-    // aún no disparan load al volver a Home.
     requestAnimationFrame(() => {
       if (runId !== setupSponsorsInfiniteLoop._runId) return
 
       const marqueeWidth = marquee.getBoundingClientRect().width
-
-      // ✅ 3) Rellenamos el grupo hasta cubrir el ancho visible
       const seedNodes = [...baseGroup.children].slice(0, seedCount)
 
-      // Repetimos logos dentro del grupo hasta que sea >= ancho del contenedor
       while (baseGroup.scrollWidth < marqueeWidth * 1.25) {
         seedNodes.forEach((node) => baseGroup.appendChild(node.cloneNode(true)))
       }
 
-      // ✅ 4) Clonamos el grupo completo para el loop infinito (dos mitades idénticas)
       const clone = baseGroup.cloneNode(true)
       clone.setAttribute('aria-hidden', 'true')
       track.appendChild(clone)
 
-      // ✅ 5) Duración basada en velocidad constante (sin depender de px exactos del translate)
       const distance = baseGroup.scrollWidth
-      // Keep desktop speed as-is. On mobile, make it just a touch faster.
       const speed = window.innerWidth <= 560 ? 45 : 70 // px/seg
       const duration = Math.max(12, distance / Math.max(1, speed))
 
-      // Evita “saltos” al recalcular: reinicia la animación de forma limpia
       track.style.animation = 'none'
       // eslint-disable-next-line no-unused-expressions
       track.offsetHeight
@@ -465,7 +442,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
-  // ✅ Recalcula el marquee al cambiar a responsive / rotar / redimensionar
   let sponsorsResizeT = 0
   const scheduleSponsorsRebuild = () => {
     window.clearTimeout(sponsorsResizeT)
@@ -476,13 +452,10 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('resize', scheduleSponsorsRebuild, { passive: true })
   window.addEventListener('orientationchange', scheduleSponsorsRebuild)
 
-  // ✅ Fix: if Home comes back from bfcache (back/forward), ensure the sponsors
-  // marquee recalculates and doesn't fall back to the default duration.
   window.addEventListener('pageshow', () => {
     const mount = document.querySelector('#sponsorsMount')
     if (!mount) return
 
-    // If markup isn't there for any reason, rebuild it.
     if (!mount.querySelector('.sponsorMarqueeElegant')) {
       injectSponsorsSection()
       return
@@ -503,41 +476,33 @@ document.addEventListener('DOMContentLoaded', () => {
       const baseGroup = track && track.querySelector('.citiesTicker__group')
       if (!track || !baseGroup) return
 
-      // Keep a seed version so we can rebuild on resize without growing forever
       if (!baseGroup.dataset.seedHtml)
         baseGroup.dataset.seedHtml = baseGroup.innerHTML
       const seedHtml = baseGroup.dataset.seedHtml
 
-      // Remove any duplicated groups from previous builds
       ;[...track.querySelectorAll('.citiesTicker__group')].forEach((g, i) => {
         if (i > 0) g.remove()
       })
 
-      // Reset base content
       baseGroup.innerHTML = seedHtml
 
-      // Ensure the base group is wide enough to cover the viewport (prevents gaps)
       let guard = 0
       while (baseGroup.scrollWidth < marquee.clientWidth * 1.25 && guard < 8) {
         baseGroup.insertAdjacentHTML('beforeend', seedHtml)
         guard += 1
       }
 
-      // Clone once for perfect wrap
       const clone = baseGroup.cloneNode(true)
       clone.setAttribute('aria-hidden', 'true')
       track.appendChild(clone)
 
-      // Set CSS vars so the animation moves exactly 1 group width
       const distance = baseGroup.scrollWidth
       track.style.setProperty('--ticker-shift', `${distance}px`)
 
-      // Speed-based duration (consistent feel across screen sizes)
       const speed = window.innerWidth <= 560 ? 55 : 90 // px/sec
       const duration = Math.max(18, distance / Math.max(1, speed))
       track.style.setProperty('--ticker-duration', `${duration}s`)
 
-      // Reset animation cleanly (avoids a visible jump on rebuild)
       track.style.animation = 'none'
       // eslint-disable-next-line no-unused-expressions
       track.offsetHeight
@@ -564,6 +529,61 @@ document.addEventListener('DOMContentLoaded', () => {
     window.matchMedia &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+  // ✅ NEW: Force hero video autoplay (best effort for iOS/Safari)
+  function initHeroVideoAutoplay() {
+    const videos = [
+      ...document.querySelectorAll('video.videoCta__video, .videoCta__video')
+    ].filter(Boolean)
+
+    if (!videos.length) return
+    if (prefersReducedMotion) return
+
+    videos.forEach((v) => {
+      // Required flags for autoplay across browsers
+      v.muted = true
+      v.defaultMuted = true
+      v.playsInline = true
+      v.preload = 'auto'
+
+      v.setAttribute('muted', '')
+      v.setAttribute('playsinline', '')
+      v.setAttribute('webkit-playsinline', '')
+      v.setAttribute('autoplay', '')
+      v.setAttribute('loop', '')
+
+      // If you do NOT want to see the poster at all, keep it empty
+      if (v.hasAttribute('poster')) v.setAttribute('poster', '')
+
+      const tryPlay = () => {
+        if (document.hidden) return
+        const p = v.play()
+        if (p && typeof p.catch === 'function') p.catch(() => {})
+      }
+
+      // 1) Immediate attempt
+      tryPlay()
+
+      // 2) Retry when the browser has enough data
+      v.addEventListener('loadeddata', tryPlay, { once: true })
+      v.addEventListener('canplay', tryPlay, { once: true })
+
+      // 3) When returning from bfcache / tab changes
+      window.addEventListener('pageshow', tryPlay)
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) tryPlay()
+      })
+
+      // 4) Fallback: first user gesture (some iOS versions require it)
+      ;['touchstart', 'click', 'keydown'].forEach((evt) => {
+        document.addEventListener(evt, tryPlay, {
+          once: true,
+          passive: true,
+          capture: true
+        })
+      })
+    })
+  }
+
   function initReveal(elements, { stagger = 70 } = {}) {
     if (!elements || !elements.length) return
     if (prefersReducedMotion) return
@@ -578,7 +598,6 @@ document.addEventListener('DOMContentLoaded', () => {
       el.style.transitionDelay = `${Math.min(i * stagger, 420)}ms`
     })
 
-    // Fallback for older browsers
     if (!('IntersectionObserver' in window)) {
       elements.forEach((el) => el.classList.add('is-visible'))
       return
@@ -616,7 +635,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const update = () => {
       raf = 0
       const r = hero.getBoundingClientRect()
-      // 0 at top, 1 when hero has mostly scrolled
       const progress = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height)))
       const y = progress * 16
       img.style.transform = `translateY(${y}px) scale(1.04)`
@@ -679,7 +697,6 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.addEventListener('click', () => setTab(btn.dataset.tab))
     })
 
-    // keyboard (left/right)
     root.addEventListener('keydown', (e) => {
       if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
       const idx = buttons.findIndex((b) => b.classList.contains('is-active'))
@@ -689,7 +706,6 @@ document.addEventListener('DOMContentLoaded', () => {
       setTab(buttons[clamped].dataset.tab)
     })
 
-    // Reveal
     initReveal(
       [
         ...document.querySelectorAll('#experiences .sectionHead'),
@@ -816,13 +832,11 @@ document.addEventListener('DOMContentLoaded', () => {
       prev && prev.addEventListener('click', () => go(-1))
       next && next.addEventListener('click', () => go(1))
 
-      // keyboard (left/right) when focused inside the media container
       media.addEventListener('keydown', (e) => {
         if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
         go(e.key === 'ArrowRight' ? 1 : -1)
       })
 
-      // Initial
       render()
     }
 
@@ -898,13 +912,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (card) card.classList.add('is-switching')
       window.clearTimeout(switchT)
 
-      // Update content
       imgEl.src = cities[key].image
       imgEl.alt = cities[key].name
       nameEl.textContent = cities[key].name
       descEl.textContent = cities[key].desc
 
-      // Remove switching state after a beat
       switchT = window.setTimeout(() => {
         if (card) card.classList.remove('is-switching')
       }, 180)
@@ -928,10 +940,8 @@ document.addEventListener('DOMContentLoaded', () => {
     prevBtn && prevBtn.addEventListener('click', () => go(-1))
     nextBtn && nextBtn.addEventListener('click', () => go(1))
 
-    // Initial render
     setActive(order[index])
 
-    // Reveal
     initReveal(
       [
         root.querySelector('.destinationsHead'),
@@ -941,6 +951,7 @@ document.addEventListener('DOMContentLoaded', () => {
       { stagger: 90 }
     )
   }
+
   function initTimelineActive() {
     const items = [...document.querySelectorAll('[data-timeline-item]')]
     if (!items.length) return
@@ -965,7 +976,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     items.forEach((it) => io.observe(it))
 
-    // Reveal
     initReveal(
       [...document.querySelectorAll('#journey .sectionHead'), ...items],
       { stagger: 70 }
@@ -1046,7 +1056,6 @@ document.addEventListener('DOMContentLoaded', () => {
     render()
     start()
 
-    // Reveal
     initReveal(
       [
         ...document.querySelectorAll('#proof .sectionHead'),
@@ -1057,6 +1066,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function initWow() {
+    // ✅ NEW: autoplay hero video (best effort)
+    initHeroVideoAutoplay()
+
     initHeroParallax()
     initHowStepsActive()
     initExperienceTabs()
@@ -1065,7 +1077,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initTestimonialsCarousel()
     initDestinationsMap()
 
-    // Basic reveal for how-it-works section
     initReveal(
       [
         ...document.querySelectorAll('#how .sectionHead'),
@@ -1084,7 +1095,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const faq = document.querySelector('#faq')
     if (!faq) return
 
-    // Respect user preference for reduced motion
     const reducedMotion =
       window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -1097,19 +1107,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!elements.length) return
 
-    // Add base animation class + a subtle stagger
     elements.forEach((el, i) => {
       el.classList.add('reveal')
       el.style.transitionDelay = `${Math.min(i * 80, 400)}ms`
     })
 
-    // Helper: mark as visible immediately if already in view
     const isInView = (el) => {
       const r = el.getBoundingClientRect()
       return r.top < window.innerHeight * 0.88 && r.bottom > 0
     }
 
-    // Fallback for older browsers
     if (!('IntersectionObserver' in window)) {
       elements.forEach((el) => el.classList.add('is-visible'))
       return
@@ -1204,7 +1211,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const header = document.querySelector('.header')
     if (!nav && !header) return
 
-    // Create pill once
     let pill = document.querySelector('[data-online-pill]')
     if (!pill) {
       pill = document.createElement('div')
@@ -1222,7 +1228,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const ensureDock = () => {
       if (!header) return null
 
-      // Dock lives AFTER the sticky header, so it is not fixed while scrolling
       let dock = document.querySelector('.onlineDock')
       if (!dock) {
         dock = document.createElement('div')
@@ -1230,7 +1235,6 @@ document.addEventListener('DOMContentLoaded', () => {
         dock.innerHTML = `<div class="container onlineDock__inner"></div>`
         header.insertAdjacentElement('afterend', dock)
       } else if (dock.parentElement === header) {
-        // If an older version appended it inside the header, move it out
         header.insertAdjacentElement('afterend', dock)
       }
 
@@ -1245,7 +1249,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return
       }
 
-      // Desktop/tablet: keep pill in the nav
       if (!nav) return
       const cta = nav.querySelector('.nav__cta')
       if (cta) nav.insertBefore(pill, cta)
@@ -1267,7 +1270,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const madridStr = fmt('Europe/Madrid').format(now)
       const dohaStr = fmt('Asia/Qatar').format(now)
 
-      // Always online (24/7)
       pill.classList.remove('is-offline')
       pill.querySelector('.onlineText').textContent = 'Online Now'
       pill.querySelector(
@@ -1363,7 +1365,6 @@ document.addEventListener('DOMContentLoaded', () => {
         addons: []
       }
 
-      // Apply URL overrides (only if valid)
       if (
         urlState.city &&
         [...citySel.options].some((o) => o.value === urlState.city)
@@ -1393,14 +1394,12 @@ document.addEventListener('DOMContentLoaded', () => {
         )
       }
 
-      // Sync any custom selects (mpSelect) after programmatic URL overrides
       ;[citySel, daysSel, levelSel].forEach((sel) => {
         sel.dispatchEvent(new Event('input', { bubbles: true }))
         sel.dispatchEvent(new Event('change', { bubbles: true }))
       })
 
       const render = () => {
-        // Update state
         state.city = citySel.value
         state.days = parseInt(daysSel.value, 10)
         state.level = levelSel.value
@@ -1423,7 +1422,6 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="ebSummary__addons">${addons}</div>
         `
 
-        // Sync URL + itinerary
         const link = setQueryState(state)
         root.dataset.ebShare = link
         window.dispatchEvent(
@@ -1443,7 +1441,6 @@ document.addEventListener('DOMContentLoaded', () => {
           render()
         })
       })
-      // Keep render reactive for both native and custom select interactions
       ;[citySel, daysSel, levelSel].forEach((el) => {
         el.addEventListener('input', render)
         el.addEventListener('change', render)
@@ -1461,7 +1458,6 @@ document.addEventListener('DOMContentLoaded', () => {
             copyBtn.textContent = 'Copied!'
             window.setTimeout(() => (copyBtn.textContent = 'Copy link'), 1300)
           } catch (e) {
-            // Fallback
             window.prompt('Copy this link:', window.location.origin + link)
           }
         })
@@ -1477,7 +1473,6 @@ document.addEventListener('DOMContentLoaded', () => {
             : document.querySelector('form')
           if (!form) return
 
-          // Ensure hidden field exists
           let hidden = form.querySelector('input[name="experience_builder"]')
           if (!hidden) {
             hidden = document.createElement('input')
@@ -1487,11 +1482,9 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           hidden.value = JSON.stringify(state)
 
-          // Pre-fill message
           const textarea = form.querySelector('textarea[name="message"]')
           if (textarea) textarea.value = buildBuilderMessage(state)
 
-          // Set topic to Training Camp when available
           const topic = form.querySelector('select[name="topic"]')
           if (topic) {
             const hasTC = [...topic.options].some(
@@ -1504,12 +1497,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           }
 
-          // Focus first field (nice UX)
           const name = form.querySelector('input[name="name"]')
           name && name.focus()
         })
 
-      // Initial render
       render()
     })
   }
@@ -1673,13 +1664,11 @@ document.addEventListener('DOMContentLoaded', () => {
       })
     })
 
-    // Sync with builder changes when present
     window.addEventListener('mp:builderChange', (e) => {
       const d = e.detail && e.detail.days
       if ([3, 5, 7].includes(d)) render(d)
     })
 
-    // Initial render (default 3 selected in UI)
     render(3)
   }
 
@@ -1704,10 +1693,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let didDrag = false
 
     const onDown = (e) => {
-      // IMPORTANT:
-      // Avoid setPointerCapture here. Capturing the pointer on the rail can
-      // cause the browser to fire the subsequent click on the rail instead of
-      // the card, making "click to expand" feel broken.
       isDown = true
       didDrag = false
       startX = e.clientX
@@ -1736,12 +1721,8 @@ document.addEventListener('DOMContentLoaded', () => {
     rail.addEventListener('pointercancel', onUp)
     rail.addEventListener('pointerleave', onUp)
 
-    // If the pointer is released outside the rail, we still want to end drag mode
     window.addEventListener('pointerup', onUp)
     window.addEventListener('pointercancel', onUp)
-
-    // Note: Academy Spotlight currently keeps ONLY the lateral drag/scroll.
-    // The detail / expand / gallery functionality will be reintroduced later.
   }
 
   // Init WOW add-ons
