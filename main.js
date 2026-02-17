@@ -1690,7 +1690,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const rail = root.querySelector('[data-spotlight-rail]')
     if (!rail) return
 
-    // Drag-to-scroll
+    const isCoarsePointer =
+      (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
+      (navigator && navigator.maxTouchPoints && navigator.maxTouchPoints > 0)
+
+    // ✅ En móvil/touch: no activamos drag-to-scroll (dejamos scroll nativo)
+    if (isCoarsePointer) return
+
+    // --- Drag-to-scroll (solo desktop) ---
     let isDown = false
     let startX = 0
     let startLeft = 0

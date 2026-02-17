@@ -3521,11 +3521,17 @@ body.js-reveal .reveal.is-visible {
   display: flex;
   gap: 14px;
   overflow-x: auto;
-  touch-action: pan-y;
+  overflow-y: hidden;
+  touch-action: pan-x;
   padding: 4px 4px 12px 4px;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   cursor: grab;
+}
+@media (hover: none) and (pointer: coarse) {
+  .spotlightRail {
+    cursor: auto;
+  }
 }
 
 .spotlightRail.is-dragging {
