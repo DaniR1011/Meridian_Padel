@@ -1388,19 +1388,22 @@ body {
   background: linear-gradient(135deg, #ffffff, #9b9b9b);
 }
 
-/* ✅ Track = dos grupos seguidos */
 .sponsorTrackElegant {
   display: flex;
   flex-wrap: nowrap;
   width: max-content;
   will-change: transform;
 
+  /* ✅ iOS smoothness */
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+
   gap: 0;
-  /* Reduced vertical white height (compact strip) */
   padding: 12px 0;
   margin: 0;
 
-  /* ✅ ahora se controla por variables */
   animation: sponsorMarquee var(--marquee-duration, 24s) linear infinite;
 }
 

@@ -442,15 +442,37 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
+  // ✅ Recalcula SOLO si cambia el ancho (evita resets por iOS address bar durante scroll)
   let sponsorsResizeT = 0
+  let lastSponsorsWidth = 0
+
   const scheduleSponsorsRebuild = () => {
     window.clearTimeout(sponsorsResizeT)
     sponsorsResizeT = window.setTimeout(() => {
       setupSponsorsInfiniteLoop()
     }, 180)
   }
-  window.addEventListener('resize', scheduleSponsorsRebuild, { passive: true })
-  window.addEventListener('orientationchange', scheduleSponsorsRebuild)
+
+  const onSponsorsResize = () => {
+    const marquee = document.querySelector('.sponsorMarqueeElegant')
+    if (!marquee) return
+
+    const w = Math.round(marquee.getBoundingClientRect().width)
+
+    // iOS: al hacer scroll cambia la altura del viewport -> dispara resize
+    // pero el ancho es el mismo, así que NO reconstruimos (evita el reset)
+    if (w && w === lastSponsorsWidth) return
+    lastSponsorsWidth = w
+
+    scheduleSponsorsRebuild()
+  }
+
+  window.addEventListener('resize', onSponsorsResize, { passive: true })
+
+  window.addEventListener('orientationchange', () => {
+    lastSponsorsWidth = 0 // fuerza recalcular tras rotación
+    scheduleSponsorsRebuild()
+  })
 
   window.addEventListener('pageshow', () => {
     const mount = document.querySelector('#sponsorsMount')
@@ -461,7 +483,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return
     }
 
-    scheduleSponsorsRebuild()
+    // Rebuild solo si cambia el ancho (o si lastSponsorsWidth aún no está seteado)
+    onSponsorsResize()
   })
 
   // =======================================================
