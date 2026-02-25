@@ -361,7 +361,8 @@ document.addEventListener('DOMContentLoaded', () => {
       { src: 'assets/sponsors/sponsor-8.png', alt: 'Sponsor 8' },
       { src: 'assets/sponsors/sponsor-9.png', alt: 'Sponsor 9' },
       { src: 'assets/sponsors/sponsor-10.png', alt: 'Sponsor 10' },
-      { src: 'assets/sponsors/sponsor-11.png', alt: 'Sponsor 11' }
+      { src: 'assets/sponsors/sponsor-11.png', alt: 'Sponsor 11' },
+      { src: 'assets/sponsors/sponsor-12.png', alt: 'Sponsor 12' }
     ]
 
     // ✅ IMPORTANTE: ya NO metemos un <section> dentro (evitamos duplicados)
@@ -802,6 +803,18 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
           src: 'assets/img/gastronomy-6.jpg',
+          alt: 'Gastronomy experience photo '
+        },
+        {
+          src: 'assets/img/gastronomy-7.jpg',
+          alt: 'Gastronomy experience photo '
+        },
+        {
+          src: 'assets/img/gastronomy-8.jpg',
+          alt: 'Gastronomy experience photo '
+        },
+        {
+          src: 'assets/img/gastronomy-9.jpg',
           alt: 'Gastronomy experience photo '
         }
       ]

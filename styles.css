@@ -505,8 +505,9 @@ body {
   width: 8px;
   height: 8px;
   border-radius: 99px;
-  background: var(--mp-red);
-  box-shadow: 0 0 0 4px rgba(224, 62, 48, 0.22);
+  background: var(--mp-gold);
+  box-shadow: 0 0 0 4px rgba(242, 208, 129, 0.22),
+    0 0 12px rgba(242, 208, 129, 0.35);
 }
 
 /* subtle pulse (Meridian style) */
@@ -517,8 +518,8 @@ body {
   border-radius: 999px;
   background: radial-gradient(
     circle,
-    rgba(224, 62, 48, 0.55) 0%,
-    rgba(224, 62, 48, 0) 62%
+    rgba(242, 208, 129, 0.55) 0%,
+    rgba(242, 208, 129, 0) 62%
   );
   opacity: 0;
   transform: scale(0.75);
@@ -926,6 +927,12 @@ body {
   display: inline-flex !important;
   width: auto !important;
   align-self: center !important;
+}
+
+@media (min-width: 1024px) {
+  .videoCta__content {
+    transform: translateY(160px); /* ajusta 30-60px */
+  }
 }
 
 /* Slightly tighter on small screens */
