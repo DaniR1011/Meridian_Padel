@@ -3567,8 +3567,14 @@ body.js-reveal .reveal.is-visible {
   }
 
   .mpDate__clear {
+    /* Center vertically on mobile */
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    transform: none;
+
     right: 34px;
-    width: 24px;
+    width: 28px;
     height: 24px;
   }
 
