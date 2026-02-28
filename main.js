@@ -295,6 +295,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const syncUI = () => {
         const selected = select.options[select.selectedIndex]
         valueEl.textContent = selected ? selected.textContent : 'Select'
+        const isPlaceholder = !!(
+          selected &&
+          (selected.disabled || !select.value)
+        )
+        valueEl.classList.toggle('is-placeholder', isPlaceholder)
         ;[...menu.querySelectorAll('.mpSelect__option')].forEach((b) => {
           const isSel = b.dataset.value === select.value
           b.classList.toggle('is-selected', isSel)
@@ -339,8 +344,23 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     // Close on scroll/resize (prevents misalignment if the page moves)
+    // IMPORTANT: do NOT close when the user scrolls INSIDE the dropdown menu,
+    // otherwise long lists (e.g. group size 1–20) become impossible to reach.
     window.addEventListener('resize', () => closeAll())
-    window.addEventListener('scroll', () => closeAll(), true)
+    window.addEventListener(
+      'scroll',
+      (e) => {
+        const t = e && e.target
+        const isMenuScroll =
+          !!t &&
+          ((t.classList && t.classList.contains('mpSelect__menu')) ||
+            (t.closest && t.closest('.mpSelect__menu')))
+
+        if (isMenuScroll) return
+        closeAll()
+      },
+      true
+    )
   }
 
   // =======================================================
@@ -1676,6 +1696,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function parseDaysValue(val) {
     if (val == null) return null
     const s = String(val)
+    if (!s || !s.trim()) return null
     if (/^\d+$/.test(s)) return parseInt(s, 10)
     return s
   }
@@ -1704,13 +1725,20 @@ document.addEventListener('DOMContentLoaded', () => {
         : null
     }
   }
-
   function setQueryState(state) {
     const sp = new URLSearchParams(window.location.search)
-    sp.set('city', state.city)
-    sp.set('days', String(state.days))
-    sp.set('level', state.level)
-    sp.set('group', String(state.group))
+
+    const setOrDelete = (key, val) => {
+      if (val == null) return sp.delete(key)
+      const s = String(val)
+      if (!s || !s.trim()) return sp.delete(key)
+      sp.set(key, s)
+    }
+
+    setOrDelete('city', state.city)
+    setOrDelete('days', state.days)
+    setOrDelete('level', state.level)
+    setOrDelete('group', state.group)
 
     if (state.dateStart) sp.set('date_start', state.dateStart)
     else sp.delete('date_start')
@@ -1721,7 +1749,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (state.addons.length) sp.set('addons', state.addons.join(','))
     else sp.delete('addons')
 
-    const next = `${window.location.pathname}?${sp.toString()}${
+    const qs = sp.toString()
+    const next = `${window.location.pathname}${qs ? `?${qs}` : ''}${
       window.location.hash || ''
     }`
     window.history.replaceState({}, '', next)
@@ -1740,7 +1769,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const daysCustomWrap = root.querySelector('[data-eb-days-custom]')
       const daysCustomInp = root.querySelector('[data-eb-days-custom-input]')
       const levelSel = root.querySelector('select[name="level"]')
-      const groupInp = root.querySelector('input[name="group"]')
+      const groupSel = root.querySelector('select[name="group"]')
 
       const startInp = root.querySelector('input[name="date_start"]')
       const endInp = root.querySelector('input[name="date_end"]')
@@ -1749,9 +1778,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const summary = root.querySelector('[data-eb-summary]')
       const copyBtn = root.querySelector('[data-eb-copy]')
       const sendBtn = root.querySelector('[data-eb-send]')
+      const resetBtn = root.querySelector('[data-eb-reset]')
       const targetSel = root.dataset.ebTarget || '#contact'
 
-      if (!citySel || !daysSel || !levelSel || !groupInp || !summary) return
+      if (!citySel || !daysSel || !levelSel || !groupSel || !summary) return
 
       const bindMpDate = (input) => {
         if (!input) return
@@ -1828,7 +1858,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : ''
           const n = raw ? parseInt(raw, 10) : NaN
           if (Number.isFinite(n) && n > 0) return n
-          return 'Customize'
+          return null
         }
         return parseDaysValue(daysSel.value)
       }
@@ -1836,10 +1866,16 @@ document.addEventListener('DOMContentLoaded', () => {
       syncDaysCustomUI()
 
       const state = {
-        city: citySel.value,
+        city: citySel.value || null,
         days: getDaysValue(),
-        level: levelSel.value,
-        group: parseInt(groupInp.value, 10) || 4,
+        level: levelSel.value || null,
+        group: (() => {
+          const raw = String(groupSel.value || '').trim()
+          if (!raw) return null
+          const n = parseInt(raw, 10)
+          if (!Number.isFinite(n)) return null
+          return Math.max(1, Math.min(20, n))
+        })(),
         dateStart: startInp ? startInp.value || null : null,
         dateEnd: endInp ? endInp.value || null : null,
         addons: []
@@ -1881,8 +1917,8 @@ document.addEventListener('DOMContentLoaded', () => {
         levelSel.value = urlState.level
         state.level = urlState.level
       }
-      if (urlState.group && urlState.group >= 1 && urlState.group <= 50) {
-        groupInp.value = String(urlState.group)
+      if (urlState.group && urlState.group >= 1 && urlState.group <= 20) {
+        groupSel.value = String(urlState.group)
         state.group = urlState.group
       }
       if (
@@ -2001,21 +2037,21 @@ document.addEventListener('DOMContentLoaded', () => {
         )
       }
 
-      ;[citySel, daysSel, levelSel].forEach((sel) => {
+      ;[citySel, daysSel, levelSel, groupSel].forEach((sel) => {
         sel.dispatchEvent(new Event('input', { bubbles: true }))
         sel.dispatchEvent(new Event('change', { bubbles: true }))
       })
 
       const render = () => {
         syncDateBounds()
-        state.city = citySel.value
+        state.city = citySel.value || null
         syncDaysCustomUI()
         state.days = getDaysValue()
-        state.level = levelSel.value
-        state.group = Math.max(
-          1,
-          Math.min(50, parseInt(groupInp.value, 10) || 1)
-        )
+        state.level = levelSel.value || null
+        const rawGroup = String(groupSel.value || '').trim()
+        state.group = rawGroup
+          ? Math.max(1, Math.min(20, parseInt(rawGroup, 10) || 1))
+          : null
 
         state.dateStart = startInp ? startInp.value || null : null
         state.dateEnd = endInp ? endInp.value || null : null
@@ -2035,14 +2071,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const datesLabel = formatDateRange(state.dateStart, state.dateEnd)
 
-        summary.innerHTML = `
-          <div class="ebSummary__row"><span class="muted">City</span><strong>${state.city}</strong></div>
-          <div class="ebSummary__row"><span class="muted">Days</span><strong>${daysLabel}</strong></div>
-          <div class="ebSummary__row"><span class="muted">Dates</span><strong>${datesLabel}</strong></div>
-          <div class="ebSummary__row"><span class="muted">Level</span><strong>${state.level}</strong></div>
-          <div class="ebSummary__row"><span class="muted">Group</span><strong>${state.group}</strong></div>
-          <div class="ebSummary__addons">${addons}</div>
-        `
+        const canSend = !!(
+          state.city &&
+          state.days &&
+          state.level &&
+          state.group != null
+        )
+        if (sendBtn) sendBtn.disabled = !canSend
+
+        const isEmpty =
+          !state.city &&
+          !state.days &&
+          !state.level &&
+          state.group == null &&
+          !state.dateStart &&
+          !state.dateEnd &&
+          !state.addons.length
+
+        if (isEmpty) {
+          summary.innerHTML = `<p class="ebSummary__empty muted">Make your selections to see the preview here.</p>`
+        } else {
+          const addons = state.addons.length
+            ? state.addons
+                .map((a) => `<span class="chip chip--gold">${a}</span>`)
+                .join('')
+            : `<span class="chip">None</span>`
+
+          const daysLabel =
+            typeof state.days === 'number' && Number.isFinite(state.days)
+              ? `${state.days}`
+              : `${state.days || '—'}`
+
+          const datesLabel =
+            state.dateStart || state.dateEnd
+              ? formatDateRange(state.dateStart, state.dateEnd)
+              : '—'
+
+          summary.innerHTML = `
+    <div class="ebSummary__row"><span class="muted">City</span><strong>${
+      state.city || '—'
+    }</strong></div>
+    <div class="ebSummary__row"><span class="muted">Days</span><strong>${daysLabel}</strong></div>
+    <div class="ebSummary__row"><span class="muted">Dates</span><strong>${datesLabel}</strong></div>
+    <div class="ebSummary__row"><span class="muted">Level</span><strong>${
+      state.level || '—'
+    }</strong></div>
+    <div class="ebSummary__row"><span class="muted">Group</span><strong>${
+      state.group != null ? state.group : '—'
+    }</strong></div>
+    <div class="ebSummary__addons">${addons}</div>
+  `
+        }
 
         const link = setQueryState(state)
         root.dataset.ebShare = link
@@ -2067,7 +2146,7 @@ document.addEventListener('DOMContentLoaded', () => {
         el.addEventListener('input', render)
         el.addEventListener('change', render)
       })
-      ;[groupInp].forEach((el) => {
+      ;[groupSel].forEach((el) => {
         el.addEventListener('input', render)
         el.addEventListener('change', render)
       })
@@ -2128,6 +2207,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
           const name = form.querySelector('input[name="name"]')
           name && name.focus()
+        })
+
+      resetBtn &&
+        resetBtn.addEventListener('click', () => {
+          // Clear selects
+          citySel.value = ''
+          daysSel.value = ''
+          levelSel.value = ''
+          groupSel.value = ''
+
+          // Clear custom days
+          if (daysCustomInp) daysCustomInp.value = ''
+          syncDaysCustomUI()
+
+          // Clear dates
+          if (startInp) {
+            startInp.value = ''
+            startInp.dispatchEvent(new Event('input', { bubbles: true }))
+            startInp.dispatchEvent(new Event('change', { bubbles: true }))
+          }
+          if (endInp) {
+            endInp.value = ''
+            endInp.dispatchEvent(new Event('input', { bubbles: true }))
+            endInp.dispatchEvent(new Event('change', { bubbles: true }))
+          }
+
+          // Clear add-ons
+          state.addons = []
+          addonBtns.forEach((b) => b.classList.remove('is-on'))
+
+          // Update mpSelect UI
+          ;[citySel, daysSel, levelSel, groupSel].forEach((sel) => {
+            sel.dispatchEvent(new Event('input', { bubbles: true }))
+            sel.dispatchEvent(new Event('change', { bubbles: true }))
+          })
+
+          // Close calendar if open
+          if (typeof mpCloseCalendar === 'function') {
+            try {
+              mpCloseCalendar(false)
+            } catch (e) {}
+          }
+
+          render()
         })
 
       render()

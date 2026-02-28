@@ -98,6 +98,7 @@
                 <div class="formRow">
                   <label>City</label>
                   <select name="city" data-mp-select>
+                    <option value="" selected disabled>Choose a city</option>
                     <option value="Madrid">Madrid</option>
                     <option value="Barcelona">Barcelona</option>
                     <option value="Bilbao">Bilbao</option>
@@ -110,8 +111,9 @@
                 <div class="formRow">
                   <label>Days</label>
                   <select name="days" data-mp-select data-eb-days-select>
+                    <option value="" selected disabled>Select days</option>
                     <option value="3">3</option>
-                    <option value="5" selected>5</option>
+                    <option value="5">5</option>
                     <option value="7">7</option>
                     <option value="Customize">Customize</option>
                   </select>
@@ -134,24 +136,41 @@
                 <div class="formRow">
                   <label>Package level</label>
                   <select name="level" data-mp-select>
+                    <option value="" selected disabled>Select level</option>
                     <option value="Beginner">Beginner</option>
-                    <option value="Intermediate" selected>Intermediate</option>
+                    <option value="Intermediate">Intermediate</option>
                     <option value="Advanced">Advanced</option>
                   </select>
                 </div>
 
                 <div class="formRow">
                   <label>Group size</label>
-                  <input
-                    name="group"
-                    type="number"
-                    min="1"
-                    max="50"
-                    value="4"
-                  />
+                  <select name="group" data-mp-select>
+                    <option value="" selected disabled>Select size</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                  </select>
                 </div>
 
-                <div class="formRow">
+                <div class="formRow formRow--dateStart">
                   <label>Start date</label>
                   <div class="mpDate" data-mp-date>
                     <button
@@ -228,7 +247,7 @@
                   </div>
                 </div>
 
-                <div class="formRow">
+                <div class="formRow formRow--dateEnd">
                   <label>End date</label>
                   <div class="mpDate" data-mp-date>
                     <button
@@ -321,9 +340,18 @@
                 </button>
               </div>
 
-              <p class="muted eb__hint">
-                Tip: you can see your selection in the live preview below.
-              </p>
+              <div class="eb__footer">
+                <p class="muted eb__hint">
+                  Tip: you can see your selection in the live preview below.
+                </p>
+                <button
+                  class="btn btn--ghost eb__reset"
+                  type="button"
+                  data-eb-reset
+                >
+                  Reset
+                </button>
+              </div>
             </div>
 
             <aside class="eb__summary card card--glass">

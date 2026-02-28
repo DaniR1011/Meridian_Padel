@@ -610,6 +610,19 @@ body {
   transform: translateY(-1px);
 }
 
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn:disabled:hover {
+  transform: none;
+}
+
+.btn--primary:disabled:hover {
+  transform: none;
+}
+
 .btn--ghost {
   background: rgba(255, 255, 255, 0.06);
   color: var(--mp-white);
@@ -1670,6 +1683,10 @@ select:focus {
 
 .mpSelect__value {
   color: rgba(255, 255, 255, 0.9);
+}
+
+.mpSelect__value.is-placeholder {
+  opacity: 0.65;
 }
 
 .mpSelect__chev {
@@ -3444,6 +3461,9 @@ body.js-reveal .reveal.is-visible {
 /* Custom date (Experience Builder) */
 .mpDate {
   position: relative;
+  /* Reserve space on the right for the clear button + calendar icon
+     so the date text never sits underneath the clear (especially on mobile). */
+  --mpDate-reserve: 72px;
 }
 
 .mpDate__button {
@@ -3476,6 +3496,10 @@ body.js-reveal .reveal.is-visible {
 
 .mpDate__value {
   color: rgba(255, 255, 255, 0.9);
+  max-width: calc(100% - var(--mpDate-reserve));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mpDate__value.is-placeholder {
@@ -3500,7 +3524,7 @@ body.js-reveal .reveal.is-visible {
 .mpDate__clear {
   position: absolute;
   top: 50%;
-  right: 44px;
+  right: 38px;
   transform: translateY(-50%);
   z-index: 2;
   width: 28px;
@@ -3534,6 +3558,24 @@ body.js-reveal .reveal.is-visible {
   width: 16px;
   height: 16px;
   display: block;
+}
+
+/* Responsive tune for date clear button */
+@media (max-width: 560px) {
+  .mpDate {
+    --mpDate-reserve: 78px;
+  }
+
+  .mpDate__clear {
+    right: 34px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .mpIconX {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 /* Custom days (Experience Builder) */
@@ -3827,10 +3869,48 @@ body.mpNoScroll {
   font-size: 12px;
 }
 
+/* Builder footer (tip + reset) */
+.eb__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.eb__footer .eb__hint {
+  margin-top: 0;
+}
+
+.eb__reset {
+  padding: 10px 14px;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .eb__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .eb__reset {
+    width: 100%;
+  }
+}
+
 .ebSummary__items {
   display: grid;
   gap: 10px;
   margin-top: 10px;
+}
+
+.ebSummary__empty {
+  padding: 18px 10px;
+  text-align: center;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(242, 208, 129, 0.22);
 }
 
 .ebSummary__row {
@@ -4026,6 +4106,12 @@ body.mpNoScroll {
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 11px;
+  }
+
+  /* Dates: stack Start/End on mobile for cleaner label + clear button */
+  .page--packages .eb__grid .formRow--dateStart,
+  .page--packages .eb__grid .formRow--dateEnd {
+    grid-column: 1 / -1;
   }
 }
 
