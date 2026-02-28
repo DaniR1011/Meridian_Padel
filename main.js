@@ -1317,6 +1317,336 @@ document.addEventListener('DOMContentLoaded', () => {
     window.setInterval(tick, 60 * 1000)
   }
 
+  function formatDateShort(iso) {
+    if (!iso) return ''
+    const d = new Date(`${iso}T00:00:00`)
+    if (Number.isNaN(d.getTime())) return iso
+    try {
+      return new Intl.DateTimeFormat('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }).format(d)
+    } catch (e) {
+      return iso
+    }
+  }
+
+  function formatDateRange(startIso, endIso) {
+    if (startIso && endIso)
+      return `${formatDateShort(startIso)} → ${formatDateShort(endIso)}`
+    if (startIso && !endIso) return `${formatDateShort(startIso)} → (flexible)`
+    if (!startIso && endIso) return `(flexible) → ${formatDateShort(endIso)}`
+    return 'Flexible'
+  }
+
+  // =======================================================
+  // Custom calendar date picker (desktop)
+  // =======================================================
+  const MP_MONTHS = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ]
+  const MP_DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+  const mpIsCoarsePointer = () => {
+    try {
+      return window.matchMedia && window.matchMedia('(pointer: coarse)').matches
+    } catch (e) {
+      return false
+    }
+  }
+
+  function mpIsoToDate(iso) {
+    if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null
+    const d = new Date(`${iso}T00:00:00`)
+    return Number.isNaN(d.getTime()) ? null : d
+  }
+
+  function mpDateToIso(d) {
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }
+
+  function mpAddMonths(date, delta) {
+    const d = new Date(date.getFullYear(), date.getMonth() + delta, 1)
+    return d
+  }
+
+  const mpCal = {
+    el: null,
+    backdrop: null,
+    input: null,
+    anchor: null,
+    view: null,
+    isModal: false
+  }
+
+  function mpEnsureCalendar() {
+    if (mpCal.el) return mpCal.el
+
+    const el = document.createElement('div')
+    el.className = 'mpCal'
+    el.setAttribute('role', 'dialog')
+    el.setAttribute('aria-label', 'Select date')
+    el.setAttribute('aria-hidden', 'true')
+    el.hidden = true
+
+    el.innerHTML = `
+    <div class="mpCal__head">
+      <button class="mpCal__nav" type="button" data-mpcal-prev aria-label="Previous month">‹</button>
+      <div class="mpCal__title">
+        <span class="mpCal__month" data-mpcal-month>Month</span>
+        <span class="mpCal__year" data-mpcal-year>Year</span>
+      </div>
+      <button class="mpCal__nav" type="button" data-mpcal-next aria-label="Next month">›</button>
+    </div>
+    <div class="mpCal__dow" aria-hidden="true">
+      ${MP_DOW.map((d) => `<span>${d}</span>`).join('')}
+    </div>
+    <div class="mpCal__grid" data-mpcal-grid></div>
+  `
+
+    document.body.appendChild(el)
+    mpCal.el = el
+
+    // Backdrop (used for mobile/modal)
+    const back = document.createElement('div')
+    back.className = 'mpCalBackdrop'
+    back.setAttribute('aria-hidden', 'true')
+    back.hidden = true
+    document.body.appendChild(back)
+    mpCal.backdrop = back
+
+    back.addEventListener('click', () => mpCloseCalendar(true))
+
+    // Global close handlers (once)
+    document.addEventListener('pointerdown', (e) => {
+      if (!mpCal.el || mpCal.el.hidden) return
+      const t = e.target
+      if (mpCal.el.contains(t)) return
+      if (mpCal.anchor && mpCal.anchor.contains(t)) return
+      mpCloseCalendar()
+    })
+
+    document.addEventListener('keydown', (e) => {
+      if (!mpCal.el || mpCal.el.hidden) return
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        mpCloseCalendar(true)
+      }
+    })
+
+    window.addEventListener('resize', () => {
+      if (!mpCal.el || mpCal.el.hidden) return
+      mpPositionCalendar()
+    })
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!mpCal.el || mpCal.el.hidden) return
+        mpPositionCalendar()
+      },
+      true
+    )
+
+    el.addEventListener('click', (e) => {
+      const prev = e.target.closest('[data-mpcal-prev]')
+      const next = e.target.closest('[data-mpcal-next]')
+      const dayBtn = e.target.closest('[data-mpcal-iso]')
+      if (prev) {
+        mpCal.view = mpAddMonths(mpCal.view, -1)
+        mpRenderCalendar()
+        mpPositionCalendar()
+        return
+      }
+      if (next) {
+        mpCal.view = mpAddMonths(mpCal.view, 1)
+        mpRenderCalendar()
+        mpPositionCalendar()
+        return
+      }
+      if (dayBtn && mpCal.input) {
+        const iso = dayBtn.getAttribute('data-mpcal-iso')
+        if (dayBtn.hasAttribute('disabled')) return
+        mpCal.input.value = iso
+        mpCal.input.dispatchEvent(new Event('input', { bubbles: true }))
+        mpCal.input.dispatchEvent(new Event('change', { bubbles: true }))
+        mpCloseCalendar(true)
+      }
+    })
+
+    return el
+  }
+
+  function mpOpenCalendar(input, anchor) {
+    const el = mpEnsureCalendar()
+    mpCal.input = input
+    mpCal.anchor = anchor || input
+
+    // Modal on responsive / touch (same Meridian style, but optimized for mobile)
+    const isModal =
+      mpIsCoarsePointer() ||
+      (window.matchMedia && window.matchMedia('(max-width: 860px)').matches)
+    mpCal.isModal = !!isModal
+    el.classList.toggle('mpCal--modal', mpCal.isModal)
+
+    if (mpCal.backdrop) {
+      mpCal.backdrop.hidden = false
+      mpCal.backdrop.classList.add('is-open')
+    }
+    document.body.classList.add('mpNoScroll')
+
+    const selected = mpIsoToDate(input.value)
+    const base = selected || new Date()
+    mpCal.view = new Date(base.getFullYear(), base.getMonth(), 1)
+
+    mpRenderCalendar()
+    el.hidden = false
+    el.setAttribute('aria-hidden', 'false')
+
+    // Clear any previous inline positioning when switching between modes.
+    if (mpCal.isModal) {
+      el.style.left = ''
+      el.style.top = ''
+      el.style.transform = ''
+      return
+    }
+
+    window.requestAnimationFrame(() => mpPositionCalendar())
+  }
+
+  function mpCloseCalendar(refocus) {
+    if (!mpCal.el) return
+    mpCal.el.hidden = true
+    mpCal.el.setAttribute('aria-hidden', 'true')
+
+    if (mpCal.backdrop) {
+      mpCal.backdrop.hidden = true
+      mpCal.backdrop.classList.remove('is-open')
+    }
+    document.body.classList.remove('mpNoScroll')
+
+    mpCal.el.classList.remove('mpCal--modal')
+    mpCal.isModal = false
+
+    const a = mpCal.anchor
+    mpCal.input = null
+    mpCal.anchor = null
+    if (refocus && a && typeof a.focus === 'function') {
+      try {
+        a.focus({ preventScroll: true })
+      } catch (e) {
+        a.focus()
+      }
+    }
+  }
+
+  function mpPositionCalendar() {
+    if (!mpCal.el || mpCal.el.hidden || !mpCal.anchor) return
+    if (mpCal.isModal) return
+
+    // Ensure it has a size
+    mpCal.el.style.left = '0px'
+    mpCal.el.style.top = '0px'
+
+    const rect = mpCal.anchor.getBoundingClientRect()
+    const calRect = mpCal.el.getBoundingClientRect()
+    const vw = document.documentElement.clientWidth
+    const vh = document.documentElement.clientHeight
+    const pad = 12
+
+    let left = rect.left
+    let top = rect.bottom + 10
+
+    if (left + calRect.width > vw - pad)
+      left = Math.max(pad, vw - calRect.width - pad)
+    if (top + calRect.height > vh - pad) top = rect.top - calRect.height - 10
+    if (top < pad) top = pad
+
+    mpCal.el.style.left = `${Math.round(left)}px`
+    mpCal.el.style.top = `${Math.round(top)}px`
+  }
+
+  function mpRenderCalendar() {
+    if (!mpCal.el || !mpCal.input || !mpCal.view) return
+    const monthEl = mpCal.el.querySelector('[data-mpcal-month]')
+    const yearEl = mpCal.el.querySelector('[data-mpcal-year]')
+    const grid = mpCal.el.querySelector('[data-mpcal-grid]')
+    if (!monthEl || !yearEl || !grid) return
+
+    const y = mpCal.view.getFullYear()
+    const m = mpCal.view.getMonth()
+
+    monthEl.textContent = MP_MONTHS[m]
+    yearEl.textContent = String(y)
+
+    const first = new Date(y, m, 1)
+    const startDow = first.getDay()
+    const daysInMonth = new Date(y, m + 1, 0).getDate()
+
+    const minIso =
+      mpCal.input.min && /^\d{4}-\d{2}-\d{2}$/.test(mpCal.input.min)
+        ? mpCal.input.min
+        : null
+    const maxIso =
+      mpCal.input.max && /^\d{4}-\d{2}-\d{2}$/.test(mpCal.input.max)
+        ? mpCal.input.max
+        : null
+    const selectedIso =
+      mpCal.input.value && /^\d{4}-\d{2}-\d{2}$/.test(mpCal.input.value)
+        ? mpCal.input.value
+        : null
+    const todayIso = mpDateToIso(new Date())
+
+    const cells = []
+    for (let i = 0; i < 42; i++) {
+      const dayNum = i - startDow + 1
+      const d = new Date(y, m, dayNum)
+      const iso = mpDateToIso(d)
+
+      const isOut = dayNum < 1 || dayNum > daysInMonth
+      const isSelected = selectedIso && iso === selectedIso
+      const isToday = iso === todayIso
+
+      let isDisabled = false
+      if (minIso && iso < minIso) isDisabled = true
+      if (maxIso && iso > maxIso) isDisabled = true
+
+      const cls = [
+        'mpCal__day',
+        isOut ? 'is-out' : '',
+        isSelected ? 'is-selected' : '',
+        isToday ? 'is-today' : '',
+        isDisabled ? 'is-disabled' : ''
+      ]
+        .filter(Boolean)
+        .join(' ')
+
+      cells.push(
+        `<button type="button" class="${cls}" data-mpcal-iso="${iso}" ${
+          isDisabled ? 'disabled' : ''
+        } aria-label="${iso}">
+        ${d.getDate()}
+      </button>`
+      )
+    }
+
+    grid.innerHTML = cells.join('')
+  }
+
   function buildBuilderMessage(state) {
     const lines = [
       `Hi Meridian Padel,`,
@@ -1325,9 +1655,15 @@ document.addEventListener('DOMContentLoaded', () => {
     ]
 
     if (state.city) lines.push(`• City: ${state.city}`)
-    if (Number.isFinite(state.days))
+
+    if (typeof state.days === 'number' && Number.isFinite(state.days))
       lines.push(`• Duration: ${state.days} days`)
     else if (state.days) lines.push(`• Duration: ${state.days}`)
+
+    if (state.dateStart || state.dateEnd) {
+      lines.push(`• Dates: ${formatDateRange(state.dateStart, state.dateEnd)}`)
+    }
+
     if (state.level) lines.push(`• Package level: ${state.level}`)
     if (state.group != null) lines.push(`• Group size: ${state.group}`)
     if (Array.isArray(state.addons) && state.addons.length) {
@@ -1337,6 +1673,13 @@ document.addEventListener('DOMContentLoaded', () => {
     return lines.join('\n')
   }
 
+  function parseDaysValue(val) {
+    if (val == null) return null
+    const s = String(val)
+    if (/^\d+$/.test(s)) return parseInt(s, 10)
+    return s
+  }
+
   function readQueryState() {
     const sp = new URLSearchParams(window.location.search)
     const city = sp.get('city')
@@ -1344,11 +1687,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const level = sp.get('level')
     const group = sp.get('group')
     const addons = sp.get('addons')
+    const dateStart = sp.get('date_start')
+    const dateEnd = sp.get('date_end')
     return {
       city: city || null,
-      days: days ? parseInt(days, 10) : null,
+      days: days ? parseDaysValue(days) : null,
       level: level || null,
       group: group ? parseInt(group, 10) : null,
+      dateStart: dateStart || null,
+      dateEnd: dateEnd || null,
       addons: addons
         ? addons
             .split(',')
@@ -1364,6 +1711,13 @@ document.addEventListener('DOMContentLoaded', () => {
     sp.set('days', String(state.days))
     sp.set('level', state.level)
     sp.set('group', String(state.group))
+
+    if (state.dateStart) sp.set('date_start', state.dateStart)
+    else sp.delete('date_start')
+
+    if (state.dateEnd) sp.set('date_end', state.dateEnd)
+    else sp.delete('date_end')
+
     if (state.addons.length) sp.set('addons', state.addons.join(','))
     else sp.delete('addons')
 
@@ -1383,8 +1737,14 @@ document.addEventListener('DOMContentLoaded', () => {
     roots.forEach((root) => {
       const citySel = root.querySelector('select[name="city"]')
       const daysSel = root.querySelector('select[name="days"]')
+      const daysCustomWrap = root.querySelector('[data-eb-days-custom]')
+      const daysCustomInp = root.querySelector('[data-eb-days-custom-input]')
       const levelSel = root.querySelector('select[name="level"]')
       const groupInp = root.querySelector('input[name="group"]')
+
+      const startInp = root.querySelector('input[name="date_start"]')
+      const endInp = root.querySelector('input[name="date_end"]')
+
       const addonBtns = [...root.querySelectorAll('.ebAddOn')]
       const summary = root.querySelector('[data-eb-summary]')
       const copyBtn = root.querySelector('[data-eb-copy]')
@@ -1393,11 +1753,95 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (!citySel || !daysSel || !levelSel || !groupInp || !summary) return
 
+      const bindMpDate = (input) => {
+        if (!input) return
+        const wrap = input.closest('.mpDate')
+        if (!wrap || wrap.dataset.mpDateBound) return
+        wrap.dataset.mpDateBound = '1'
+
+        const btn = wrap.querySelector('[data-mp-date-btn]')
+        const label = wrap.querySelector('[data-mp-date-label]')
+        const clearBtn = wrap.querySelector('[data-mp-date-clear]')
+
+        const update = () => {
+          if (!label) return
+          if (!input.value) {
+            label.textContent = 'Choose a date'
+            label.classList.add('is-placeholder')
+            if (clearBtn) clearBtn.hidden = true
+            return
+          }
+          label.textContent = formatDateShort(input.value)
+          label.classList.remove('is-placeholder')
+          if (clearBtn) clearBtn.hidden = false
+        }
+
+        const open = () => {
+          // Custom Meridian calendar on all devices (modal on mobile).
+          mpOpenCalendar(input, btn || wrap)
+        }
+
+        btn && btn.addEventListener('click', open)
+        input.addEventListener('input', update)
+        input.addEventListener('change', update)
+
+        if (clearBtn) {
+          clearBtn.addEventListener('click', (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+
+            input.value = ''
+            input.dispatchEvent(new Event('input', { bubbles: true }))
+            input.dispatchEvent(new Event('change', { bubbles: true }))
+
+            // If the calendar is open for this input, close it.
+            if (
+              typeof mpCal !== 'undefined' &&
+              mpCal &&
+              mpCal.input === input
+            ) {
+              mpCloseCalendar(false)
+            }
+
+            update()
+          })
+        }
+
+        update()
+      }
+
+      bindMpDate(startInp)
+      bindMpDate(endInp)
+
+      const syncDaysCustomUI = () => {
+        if (!daysCustomWrap) return
+        const on = daysSel && daysSel.value === 'Customize'
+        daysCustomWrap.hidden = !on
+        if (!on && daysCustomInp) daysCustomInp.value = ''
+      }
+
+      const getDaysValue = () => {
+        if (!daysSel) return null
+        if (daysSel.value === 'Customize') {
+          const raw = daysCustomInp
+            ? String(daysCustomInp.value || '').trim()
+            : ''
+          const n = raw ? parseInt(raw, 10) : NaN
+          if (Number.isFinite(n) && n > 0) return n
+          return 'Customize'
+        }
+        return parseDaysValue(daysSel.value)
+      }
+
+      syncDaysCustomUI()
+
       const state = {
         city: citySel.value,
-        days: parseInt(daysSel.value, 10),
+        days: getDaysValue(),
         level: levelSel.value,
         group: parseInt(groupInp.value, 10) || 4,
+        dateStart: startInp ? startInp.value || null : null,
+        dateEnd: endInp ? endInp.value || null : null,
         addons: []
       }
 
@@ -1408,9 +1852,27 @@ document.addEventListener('DOMContentLoaded', () => {
         citySel.value = urlState.city
         state.city = urlState.city
       }
-      if (urlState.days && [3, 5, 7].includes(urlState.days)) {
-        daysSel.value = String(urlState.days)
-        state.days = urlState.days
+      if (urlState.days != null) {
+        const val = String(urlState.days)
+        // If it's a normal option, select it.
+        if ([...daysSel.options].some((o) => o.value === val)) {
+          daysSel.value = val
+          state.days = urlState.days
+        } else if (
+          typeof urlState.days === 'number' &&
+          Number.isFinite(urlState.days)
+        ) {
+          // If it's a custom numeric value, switch to Customize and show the exact-days input.
+          const hasCustomize = [...daysSel.options].some(
+            (o) => o.value === 'Customize'
+          )
+          if (hasCustomize) {
+            daysSel.value = 'Customize'
+            if (daysCustomInp) daysCustomInp.value = String(urlState.days)
+            state.days = urlState.days
+            syncDaysCustomUI()
+          }
+        }
       }
       if (
         urlState.level &&
@@ -1423,6 +1885,115 @@ document.addEventListener('DOMContentLoaded', () => {
         groupInp.value = String(urlState.group)
         state.group = urlState.group
       }
+      if (
+        startInp &&
+        urlState.dateStart &&
+        /^\d{4}-\d{2}-\d{2}$/.test(urlState.dateStart)
+      ) {
+        startInp.value = urlState.dateStart
+        state.dateStart = urlState.dateStart
+      }
+      if (
+        endInp &&
+        urlState.dateEnd &&
+        /^\d{4}-\d{2}-\d{2}$/.test(urlState.dateEnd)
+      ) {
+        endInp.value = urlState.dateEnd
+        state.dateEnd = urlState.dateEnd
+      }
+      // Keep dates coherent + enforce duration (days)
+      let mpSyncingDates = false
+      const mpIsoAddDays = (iso, delta) => {
+        const d = mpIsoToDate(iso)
+        if (!d) return null
+        d.setDate(d.getDate() + delta)
+        return mpDateToIso(d)
+      }
+      const getDaysLimit = () => {
+        const v = getDaysValue()
+        return typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : null
+      }
+
+      const syncDateBounds = () => {
+        if (mpSyncingDates) return
+        mpSyncingDates = true
+        try {
+          const limit = getDaysLimit()
+          const startIso = startInp ? startInp.value || '' : ''
+          const endIso = endInp ? endInp.value || '' : ''
+
+          // Basic ordering
+          if (startInp && endInp) {
+            endInp.min = startIso || ''
+            startInp.max = endIso || ''
+          }
+
+          // Duration limits
+          if (endInp) {
+            if (limit && startIso) {
+              const maxEnd = mpIsoAddDays(startIso, limit - 1)
+              endInp.max = maxEnd || ''
+            } else {
+              endInp.max = ''
+            }
+          }
+          if (startInp) {
+            if (limit && endIso) {
+              const minStart = mpIsoAddDays(endIso, -(limit - 1))
+              startInp.min = minStart || ''
+            } else {
+              startInp.min = ''
+            }
+          }
+
+          // Clamp invalid selections (no more days than selected)
+          if (startInp && endInp && startIso && endIso) {
+            if (endIso < startIso) {
+              endInp.value = ''
+              state.dateEnd = null
+              endInp.dispatchEvent(new Event('input', { bubbles: true }))
+              endInp.dispatchEvent(new Event('change', { bubbles: true }))
+              return
+            }
+
+            if (limit) {
+              const maxEnd = mpIsoAddDays(startIso, limit - 1)
+              if (maxEnd && endIso > maxEnd) {
+                endInp.value = maxEnd
+                state.dateEnd = maxEnd
+                endInp.dispatchEvent(new Event('input', { bubbles: true }))
+                endInp.dispatchEvent(new Event('change', { bubbles: true }))
+              }
+
+              // If end is set first, keep start inside the valid window too
+              const minStart = mpIsoAddDays(
+                endInp.value || endIso,
+                -(limit - 1)
+              )
+              if (minStart && startInp.value && startInp.value < minStart) {
+                startInp.value = minStart
+                state.dateStart = minStart
+                startInp.dispatchEvent(new Event('input', { bubbles: true }))
+                startInp.dispatchEvent(new Event('change', { bubbles: true }))
+              }
+            }
+          }
+        } finally {
+          mpSyncingDates = false
+        }
+      }
+
+      // Re-sync whenever dates OR duration changes
+      startInp && startInp.addEventListener('change', syncDateBounds)
+      startInp && startInp.addEventListener('input', syncDateBounds)
+      endInp && endInp.addEventListener('change', syncDateBounds)
+      endInp && endInp.addEventListener('input', syncDateBounds)
+      daysSel && daysSel.addEventListener('change', syncDateBounds)
+      daysSel && daysSel.addEventListener('input', syncDateBounds)
+      daysCustomInp && daysCustomInp.addEventListener('change', syncDateBounds)
+      daysCustomInp && daysCustomInp.addEventListener('input', syncDateBounds)
+      syncDateBounds()
+
       if (urlState.addons && Array.isArray(urlState.addons)) {
         state.addons = urlState.addons
         addonBtns.forEach((b) =>
@@ -1436,13 +2007,18 @@ document.addEventListener('DOMContentLoaded', () => {
       })
 
       const render = () => {
+        syncDateBounds()
         state.city = citySel.value
-        state.days = parseInt(daysSel.value, 10)
+        syncDaysCustomUI()
+        state.days = getDaysValue()
         state.level = levelSel.value
         state.group = Math.max(
           1,
           Math.min(50, parseInt(groupInp.value, 10) || 1)
         )
+
+        state.dateStart = startInp ? startInp.value || null : null
+        state.dateEnd = endInp ? endInp.value || null : null
 
         const addons = state.addons.length
           ? state.addons
@@ -1450,9 +2026,19 @@ document.addEventListener('DOMContentLoaded', () => {
               .join('')
           : `<span class="chip">None</span>`
 
+        const daysLabel =
+          typeof state.days === 'number' && Number.isFinite(state.days)
+            ? `${state.days}`
+            : daysSel && daysSel.value === 'Customize'
+            ? 'Custom'
+            : `${state.days}`
+
+        const datesLabel = formatDateRange(state.dateStart, state.dateEnd)
+
         summary.innerHTML = `
           <div class="ebSummary__row"><span class="muted">City</span><strong>${state.city}</strong></div>
-          <div class="ebSummary__row"><span class="muted">Days</span><strong>${state.days}</strong></div>
+          <div class="ebSummary__row"><span class="muted">Days</span><strong>${daysLabel}</strong></div>
+          <div class="ebSummary__row"><span class="muted">Dates</span><strong>${datesLabel}</strong></div>
           <div class="ebSummary__row"><span class="muted">Level</span><strong>${state.level}</strong></div>
           <div class="ebSummary__row"><span class="muted">Group</span><strong>${state.group}</strong></div>
           <div class="ebSummary__addons">${addons}</div>
@@ -1482,6 +2068,13 @@ document.addEventListener('DOMContentLoaded', () => {
         el.addEventListener('change', render)
       })
       ;[groupInp].forEach((el) => {
+        el.addEventListener('input', render)
+        el.addEventListener('change', render)
+      })
+
+      daysCustomInp && daysCustomInp.addEventListener('input', render)
+      daysCustomInp && daysCustomInp.addEventListener('change', render)
+      ;[startInp, endInp].filter(Boolean).forEach((el) => {
         el.addEventListener('input', render)
         el.addEventListener('change', render)
       })

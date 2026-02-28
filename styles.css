@@ -3441,6 +3441,356 @@ body.js-reveal .reveal.is-visible {
   gap: 14px;
 }
 
+/* Custom date (Experience Builder) */
+.mpDate {
+  position: relative;
+}
+
+.mpDate__button {
+  width: 100%;
+  border-radius: 16px;
+  padding: 12px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--mp-white);
+  outline: none;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: 0.18s ease;
+}
+
+.mpDate__button:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(242, 208, 129, 0.18);
+}
+
+.mpDate__button:focus-visible {
+  border-color: rgba(242, 208, 129, 0.35);
+  box-shadow: 0 0 0 3px rgba(242, 208, 129, 0.18);
+}
+
+.mpDate__value {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.mpDate__value.is-placeholder {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.mpDate__icon {
+  font-size: 14px;
+  opacity: 0.9;
+  flex: 0 0 auto;
+}
+
+.mpDate__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mpDate__clear {
+  position: absolute;
+  top: 50%;
+  right: 44px;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(3, 2, 3, 0.35);
+  color: rgba(242, 208, 129, 0.95);
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.mpDate__clear:hover {
+  background: rgba(242, 208, 129, 0.12);
+  border-color: rgba(242, 208, 129, 0.22);
+}
+
+.mpDate__clear:focus-visible {
+  outline: none;
+  border-color: rgba(242, 208, 129, 0.35);
+  box-shadow: 0 0 0 3px rgba(242, 208, 129, 0.18);
+}
+
+.mpDate__clear[hidden] {
+  display: none !important;
+}
+
+.mpIconX {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* Custom days (Experience Builder) */
+.ebDaysCustom {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Ensure the native [hidden] attribute actually hides this block (author CSS overrides UA defaults). */
+.ebDaysCustom[hidden] {
+  display: none !important;
+}
+
+.ebDaysCustom__label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+  width: 100%;
+}
+
+.ebDaysCustom input {
+  width: clamp(140px, 76%, 220px);
+  margin: 0 auto;
+  text-align: center;
+  border-radius: 14px;
+  padding: 12px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.92);
+  outline: none;
+  font-family: inherit;
+  transition: 0.18s ease;
+}
+
+.ebDaysCustom input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.ebDaysCustom input:focus-visible {
+  border-color: rgba(242, 208, 129, 0.35);
+  box-shadow: 0 0 0 3px rgba(242, 208, 129, 0.18);
+}
+
+/* Calendar icon (Experience Builder dates) */
+.mpDate__icon {
+  color: rgba(242, 208, 129, 0.95);
+}
+
+.mpIconCal {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+/* Meridian calendar popover (all devices) */
+body.mpNoScroll {
+  overflow: hidden;
+}
+
+.mpCalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* Modal mode for responsive / touch */
+.mpCal.mpCal--modal {
+  left: 50% !important;
+  top: auto !important;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+}
+
+@media (max-width: 860px) {
+  .mpCal {
+    width: min(420px, calc(100vw - 24px));
+    padding: 14px;
+    border-radius: 22px;
+  }
+
+  .mpCal__nav {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    font-size: 20px;
+  }
+
+  .mpCal__dow {
+    font-size: 12px;
+    padding-bottom: 10px;
+  }
+
+  .mpCal__grid {
+    gap: 8px;
+    padding: 6px;
+  }
+
+  .mpCal__day {
+    font-size: 14px;
+  }
+}
+
+.mpCal {
+  position: fixed;
+  z-index: 9999;
+  width: min(340px, calc(100vw - 24px));
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(16, 16, 16, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.58);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.mpCal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 2px 10px;
+}
+
+.mpCal__title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+.mpCal__month {
+  font-size: 14px;
+}
+
+.mpCal__year {
+  font-size: 14px;
+  opacity: 0.75;
+  font-weight: 700;
+}
+
+.mpCal__nav {
+  -webkit-tap-highlight-color: transparent;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  font-size: 18px;
+}
+
+.mpCal__nav:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(242, 208, 129, 0.22);
+  transform: translateY(-1px);
+}
+
+.mpCal__nav:active {
+  transform: translateY(0);
+}
+
+.mpCal__nav:focus-visible {
+  outline: none;
+  border-color: rgba(242, 208, 129, 0.35);
+  box-shadow: 0 0 0 3px rgba(242, 208, 129, 0.18);
+}
+
+.mpCal__dow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  padding: 0 4px 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.mpCal__dow span {
+  text-align: center;
+}
+
+.mpCal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  padding: 4px;
+}
+
+.mpCal__day {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: 0.14s ease;
+}
+
+.mpCal__day:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.mpCal__day.is-out {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.mpCal__day.is-disabled {
+  color: rgba(255, 255, 255, 0.22);
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.mpCal__day.is-disabled:hover {
+  background: transparent;
+  border-color: transparent;
+}
+
+.mpCal__day.is-today:not(.is-selected) {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.mpCal__day.is-selected {
+  border-color: rgba(242, 208, 129, 0.92);
+  box-shadow: 0 0 0 2px rgba(242, 208, 129, 0.14);
+  background: rgba(242, 208, 129, 0.06);
+}
+
+.mpCal__day:focus-visible {
+  outline: none;
+  border-color: rgba(242, 208, 129, 0.92);
+  box-shadow: 0 0 0 3px rgba(242, 208, 129, 0.18);
+}
+
 .eb__addons {
   display: flex;
   flex-wrap: wrap;
