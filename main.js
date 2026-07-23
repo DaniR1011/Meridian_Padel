@@ -383,7 +383,11 @@ document.addEventListener('DOMContentLoaded', () => {
       { src: 'assets/sponsors/sponsor-10.png', alt: 'Sponsor 10' },
       { src: 'assets/sponsors/sponsor-11.png', alt: 'Sponsor 11' },
       { src: 'assets/sponsors/sponsor-12.png', alt: 'Sponsor 12' },
-      { src: 'assets/sponsors/sponsor-13.png', alt: 'Sponsor 13' }
+      { src: 'assets/sponsors/sponsor-13.png', alt: 'Sponsor 13' },
+      { src: 'assets/sponsors/sponsor-14.png', alt: 'Sponsor 14' },
+      { src: 'assets/sponsors/sponsor-15.png', alt: 'Sponsor 15' },
+      { src: 'assets/sponsors/sponsor-16.png', alt: 'Sponsor 16' },
+      { src: 'assets/sponsors/sponsor-17.png', alt: 'Sponsor 17' }
     ]
 
     // ✅ IMPORTANTE: ya NO metemos un <section> dentro (evitamos duplicados)
